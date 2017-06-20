@@ -192,16 +192,19 @@ public class MailService {
 			if(users!=null)
 			{
 				users=users.replace(loginForm.getUsername(), "");
-				if(users.charAt(0)==',')
+				if(users!=null && !users.isEmpty())
 				{
-					users= users.substring(1, users.length());
+					if(users.charAt(0)==',')
+					{
+						users= users.substring(1, users.length());
+					}
+					else if(users.charAt(users.length()-1)==',')
+					{
+						users= users.substring(0, users.length()-1);
+					}
+					else
+					users=users.replace(",,", ",");
 				}
-				else if(users.charAt(users.length()-1)==',')
-				{
-					users= users.substring(0, users.length()-1);
-				}
-				else
-				users=users.replace(",,", ",");
 			}
 			else if(users==null)
 			{
