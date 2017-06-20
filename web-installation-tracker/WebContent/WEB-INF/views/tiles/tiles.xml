@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC  "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"  "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">  
+
+<tiles-definitions>  
+
+	<definition name="login-definition" 
+       template="/WEB-INF/views/tiles/layouts/defaultLayout.jsp">  
+       <put-attribute name="title" value="" />  
+       <put-attribute name="header" value="/WEB-INF/views/tiles/template/defaultLoginHeader.jsp" /> 
+       <put-attribute name="menu" value="/WEB-INF/views/tiles/template/defaultLoginMenu.jsp" />  
+       <put-attribute name="body" value="/WEB-INF/views/pages/login.jsp" />  
+       <put-attribute name="footer" value="/WEB-INF/views/tiles/template/defaultFooter.jsp" />  
+   </definition>  
+ 
+   <!-- Base Definition -->
+   <definition name="base-definition" 
+       template="/WEB-INF/views/tiles/layouts/defaultLayout.jsp">  
+       <put-attribute name="title" value="" />  
+       <put-attribute name="header" value="/WEB-INF/views/tiles/template/defaultHeader.jsp" />  
+       <put-attribute name="menu" value="/WEB-INF/views/tiles/template/defaultMenu.jsp" />  
+       <put-attribute name="body" value="" />  
+       <put-attribute name="footer" value="/WEB-INF/views/tiles/template/defaultFooter.jsp" />  
+   </definition>  
+   
+     <!-- Login Page -->
+   <definition name="login" extends="login-definition">  
+       <put-attribute name="title" value="Login Page" />
+   </definition>  
+ 
+   <!-- Home Page -->
+   <definition name="list-installations" extends="base-definition">  
+       <put-attribute name="title" value="View All Installations" />  
+       <put-attribute name="body" value="/WEB-INF/views/pages/list-installations.jsp" />  
+   </definition>  
+
+   <!-- Product Page -->
+   <definition name="installation-form" extends="base-definition">  
+       <put-attribute name="title" value="Add new Installation details" />  
+       <put-attribute name="body" value="/WEB-INF/views/pages/installation-form.jsp" />  
+   </definition>  
+      
+   <!-- Contact-us Page -->
+   <definition name="contactus" extends="base-definition">  
+       <put-attribute name="title" value="Contact Us" />  
+       <put-attribute name="body" value="/WEB-INF/views/pages/contactus.jsp" />  
+   </definition>  
+ 
+</tiles-definitions>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- Add support for component scanning -->
+	<context:component-scan base-package="com.luv2code.springdemo" />
+
+	<!-- Add support for conversion, formatting and validation support -->
+	<mvc:annotation-driven />
+
+	<!-- Define Spring MVC view resolver -->
+
+	<!-- <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"> 
+		<property name="prefix" value="/WEB-INF/view/" /> <property name="suffix" 
+		value=".jsp" /> </bean> -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.tiles3.TilesViewResolver" />
+	<bean id="tilesConfigurer"
+		class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+		<property name="definitions">
+			<list>
+				<!-- <value>/WEB-INF/view_layouts/tiles.xml</value> -->
+				<value>/WEB-INF/views/tiles/tiles.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Step 1: Define Database DataSource / connection pool -->
+	<bean id="myDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<property name="jdbcUrl"
+			value="jdbc:mysql://10.30.32.83:3306/web_installation_tracker?useSSL=false" />
+		<property name="user" value="springstudent" />
+		<property name="password" value="springstudent" />
+
+		<!-- these are connection pool properties for C3P0 -->
+		<property name="minPoolSize" value="5" />
+		<property name="maxPoolSize" value="20" />
+		<property name="maxIdleTime" value="30000" />
+	</bean>
+
+	<!-- Step 2: Setup Hibernate session factory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="myDataSource" />
+		<property name="packagesToScan" value="com.luv2code.springdemo.entity" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property>
+
+		<!-- Adding Interceptor here -->
+		<property name="entityInterceptor">
+			<bean class="com.luv2code.springdemo.dao.TimeStampInterceptor"></bean>
+		</property>
+	</bean>
+
+	<!-- Step 3: Setup Hibernate transaction manager -->
+	<bean id="myTransactionManager"
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<!-- Step 4: Enable configuration of transactional behavior based on annotations -->
+	<tx:annotation-driven transaction-manager="myTransactionManager" />
+
+	<!-- Add support for reading web resources: css, images, js, etc ... -->
+	<mvc:resources location="/resources/" mapping="/resources/**"></mvc:resources>
+
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/*/**" />
+			<bean class="com.luv2code.springdemo.interceptor.AuthenticationInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename">
+			<value>messages</value>
+		</property>
+	</bean>
+
+	<!-- <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource"> 
+		<property name="url" value="ldap://bcone.com:389" /> <property name="base" 
+		value="dc=bcone,dc=com" /> <property name="userDn" value="himanshu.grover@bcone.com" 
+		/> <property name="password" value="" /> <property name="referral" value="follow" 
+		/> </bean> -->
+
+	<!-- <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource"> 
+		<property name="url" value="ldap://10.30.2.23:389" /> <property name="base" 
+		value="dc=test,dc=com" /> <property name="userDn" value="aduser1@test.com" 
+		/> <property name="password" value="test,123" /> <property name="referral" 
+		value="follow" /> </bean> -->
+
+	<!-- <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate"> 
+		<constructor-arg ref="contextSource" /> </bean> -->
+
+	<bean class="org.springframework.mail.javamail.JavaMailSenderImpl"
+		id="mailSender">
+		<property name="host">
+			<value>smtp.office365.com</value>
+		</property>
+		<property name="port">
+			<value>587</value>
+		</property>
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"
+		id="taskExecutor">
+		<property name="corePoolSize" value="5"></property>
+		<property name="maxPoolSize" value="10"></property>
+		<property name="queueCapacity" value="40"></property>
+		<property name="waitForTasksToCompleteOnShutdown" value="true"></property>
+	</bean>
+
+</beans>
