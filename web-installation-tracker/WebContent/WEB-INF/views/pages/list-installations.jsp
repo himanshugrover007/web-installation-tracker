@@ -88,14 +88,14 @@ td, th {
 
 				<c:set var="keyString">${tempInstallation.id}</c:set>
 				<c:set var="valueString">${hashMapUserDetailsForEachInstallation[keyString]}</c:set>
-			
+				<c:set var="username">${loginForm.username}</c:set>
 
 				<tr>
 					<td>${tempInstallation.ip}<br>
-					<c:if test="${not fn:containsIgnoreCase(valueString, tempInstallation.installedBy)}">
+					<c:if test="${not fn:containsIgnoreCase(valueString, username)}">
 				        <a href="${markForUseFlag}">Use</a>
 				    </c:if>
-				    <c:if test="${fn:containsIgnoreCase(valueString, tempInstallation.installedBy)}">
+				    <c:if test="${fn:containsIgnoreCase(valueString, username)}">
 				       <a href="${markForReleaseFlag}">Release</a>
 				    </c:if>
 					</td>

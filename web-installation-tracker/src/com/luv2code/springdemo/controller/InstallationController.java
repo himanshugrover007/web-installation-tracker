@@ -43,13 +43,16 @@ public class InstallationController {
 	private MailService mailService;
 
 	@GetMapping("/list")
-	public String listInstallations(Model theModel) {
+	public String listInstallations(Model theModel,HttpServletRequest httpServletRequest) {
+
+		LoginForm loginForm = (LoginForm) httpServletRequest.getSession().getAttribute("LOGGEDIN_USER");
 
 		// get installations from the service
 		List<Installation> theInstallations = installationService.getInstallations();
 		HashMap<String, String> hashMapUserDetailsForEachInstallation= installationUserService.getUserDetailsForEachInstallation();
 		// add the installations to the model
 		theModel.addAttribute("hashMapUserDetailsForEachInstallation", hashMapUserDetailsForEachInstallation);
+		theModel.addAttribute("loginForm", loginForm);
 		theModel.addAttribute("installations", theInstallations);
 
 		return "list-installations";
