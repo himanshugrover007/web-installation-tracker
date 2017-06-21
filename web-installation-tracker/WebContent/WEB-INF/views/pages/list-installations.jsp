@@ -7,6 +7,18 @@
 
 <head>
 <title>List Installations</title>
+<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js">
+ </script>
+<script>
+ $(document).ready(function(){
+ setInterval(function(){cache_clear()},10000);
+ });
+ function cache_clear()
+{
+ window.location.reload(true);
+ // window.location.reload(); use this if you do not remove cache
+}
+</script> -->
 </head>
 <style type="text/css">
 /* 

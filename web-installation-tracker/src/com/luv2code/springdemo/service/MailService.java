@@ -1,9 +1,11 @@
 package com.luv2code.springdemo.service;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,6 @@ import org.springframework.stereotype.Service;
 import com.luv2code.springdemo.constants.ActivityEmail;
 import com.luv2code.springdemo.dto.EmailMessage;
 import com.luv2code.springdemo.entity.Installation;
-import com.luv2code.springdemo.entity.InstallationUserDetails;
 import com.luv2code.springdemo.entity.LoginForm;
 
 @Service("mailService")
@@ -90,7 +91,7 @@ public class MailService {
 			helper.setFrom(emailMessage.getFrom());
 			helper.setTo(emailMessage.getTo());
 			helper.setSubject(emailMessage.getSubject());
-			helper.setText(emailMessage.getBody());
+			helper.setText(emailMessage.getBody(),true);
 		} catch (MessagingException e) {
 			throw new MailParseException(e);
 		}
@@ -104,7 +105,7 @@ public class MailService {
 		emailMessage.setFrom(loginForm.getUsername());
 		emailMessage.setTo(loginForm.getUsername());
 		emailMessage.setSubject(getSubject(loginForm,installation,hashMapUserDetailsForEachInstallation, activityEmail));
-		emailMessage.setBody(getMessageBody(loginForm,installation, hashMapUserDetailsForEachInstallation, activityEmail));
+		emailMessage.setBody(getMessageBodyForMail(loginForm,installation, hashMapUserDetailsForEachInstallation, activityEmail));
 		return emailMessage;
 	}
 	
@@ -136,42 +137,43 @@ public class MailService {
 	return subject.toString();
 	}
 	
-	private String getMessageBody(LoginForm loginForm, Installation installation, HashMap<String, String> hashMapUserDetailsForEachInstallation, ActivityEmail activityEmail) {
+	private String getMessageForBeginning(LoginForm loginForm, Installation installation, HashMap<String, String> hashMapUserDetailsForEachInstallation, ActivityEmail activityEmail) {
 
-		StringBuffer messageBody = new StringBuffer("Hi Team,\n\n");
+		StringBuffer messageBody = new StringBuffer();
 		String users="";
 		switch (activityEmail) {
 		case CREATE:
-			messageBody.append("The following environment has been created by "+loginForm.getUsername()+"\n\n");			
+			messageBody.append("The following environment has been created by "+loginForm.getUsername());	
+			messageBody.append("<br><br>");	
 			break;
 
 		case UPDATE:
-			messageBody.append("The following environment has been updated by "+loginForm.getUsername()+"\n\n");
-			messageBody.append("Environment is being used by following members :\n");
+			messageBody.append("The following environment has been updated by "+loginForm.getUsername()+"<br><br>");
+			messageBody.append("Environment is being used by following members :<br>");
 			users=hashMapUserDetailsForEachInstallation.get(String.valueOf(installation.getId()));
 			if(users==null)
 			{
 				users="NONE";
 			}
 			messageBody.append(users);
-			messageBody.append("\n\n");	
+			messageBody.append("<br><br>");	
 			break;
 			
 		case DELETE:
-			messageBody.append("The following environment has been deleted by "+loginForm.getUsername()+"\n\n");	
-			messageBody.append("Environment was being used by following members :\n");
+			messageBody.append("The following environment has been deleted by "+loginForm.getUsername()+"<br><br>");
+			messageBody.append("Environment was being used by following members :<br>");
 			users=hashMapUserDetailsForEachInstallation.get(String.valueOf(installation.getId()));
 			if(users==null)
 			{
 				users="NONE";
 			}
 			messageBody.append(users);	
-			messageBody.append("\n\n");	
+			messageBody.append("<br><br>");	
 			break;
 
 		case INUSE:
-			messageBody.append(installation.getEnvironmentType()+" - http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort() + " is being used by "+ loginForm.getUsername()+"\n\n");
-			messageBody.append("Environment is now being used by following members :\n");
+			messageBody.append(installation.getEnvironmentType()+" - http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort() + " is also being used by "+ loginForm.getUsername()+"<br><br>");
+			messageBody.append("Environment is now being used by following members :<br>");
 			users=hashMapUserDetailsForEachInstallation.get(String.valueOf(installation.getId()));
 			if(users!=null)
 			{
@@ -182,12 +184,12 @@ public class MailService {
 				users=loginForm.getUsername();
 			}			
 			messageBody.append(users);
-			messageBody.append("\n\n");	
+			messageBody.append("<br><br>");	
 			break;
 			
 		case RELEASE:
-			messageBody.append(installation.getEnvironmentType()+" - http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort() + " has been released by "+ loginForm.getUsername()+"\n\n");
-			messageBody.append("Environment is now being used by following members :\n");
+			messageBody.append(installation.getEnvironmentType()+" - http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort() + " has been released by "+ loginForm.getUsername()+"<br><br>");
+			messageBody.append("Environment is now being used by following members :<br>");
 			users=hashMapUserDetailsForEachInstallation.get(String.valueOf(installation.getId()));
 			if(users!=null)
 			{
@@ -205,52 +207,226 @@ public class MailService {
 					else
 					users=users.replace(",,", ",");
 				}
+				else
+				{
+					users="NONE";
+				}
 			}
 			else if(users==null)
 			{
 				users="NONE";
 			}
 			messageBody.append(users);	
-			messageBody.append("\n\n");	
+			messageBody.append("<br><br>");	
 			break;
-		}		
-				
-		messageBody.append("IP : "+ installation.getIp());
-		messageBody.append("\n");
-		messageBody.append("environment_type : "+ installation.getEnvironmentType());
-		messageBody.append("\n");
-		messageBody.append("Status : "+ installation.getStatus());
-		messageBody.append("\n");
-		messageBody.append("Version : "+ installation.getVersion());
-		messageBody.append("\n");
-		messageBody.append("Middleware Location : "+ installation.getMiddlewareLocation());
-		messageBody.append("\n");
-		messageBody.append("Schema Prefix : "+ installation.getSchemaPrefix());
-		messageBody.append("\n");
-		messageBody.append("Admin Server HTTP Port : "+ installation.getAdminServerHTTPPort());
-		messageBody.append("\n");
-		messageBody.append("Admin Server HTTPS Port : "+ installation.getAdminServerHTTPSPort());
-		messageBody.append("\n");
-		messageBody.append("Manage Server HTTP Port : "+ installation.getManagedServerHTTPPort());
-		messageBody.append("\n");
-		messageBody.append("Manage Server HTTPS Port : "+ installation.getManagedServerHTTPSPort());
-		messageBody.append("\n");
-		messageBody.append("Installed By : "+ installation.getEnvironmentType());
-		messageBody.append("\n");
-		messageBody.append("VNC port : "+ installation.getVncPort());
-		messageBody.append("\n");
-		if(installation.getEnvironmentType().equalsIgnoreCase("ICS IC") || installation.getEnvironmentType().equalsIgnoreCase("ICS EC"))
-		{
-			messageBody.append("ICS Console Link : "+"http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort()+"/ics");
-			messageBody.append("\n");
-		}
-		messageBody.append("Admin Console Link : "+"http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort()+"/console");
-		messageBody.append("\n");
-		messageBody.append("EM Console Link : "+"http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort()+"/em");
-		messageBody.append("\n\n");
-		messageBody.append("Thanks and Regards,\n");
-		messageBody.append(loginForm.getUsername());
-				
+		}				
 		return messageBody.toString();
 	}
+	
+	private String getMessageBodyForMail(LoginForm loginForm, Installation installation, HashMap<String, String> hashMapUserDetailsForEachInstallation, ActivityEmail activityEmail)
+	{
+
+		StringBuilder myvar = new StringBuilder(); 
+		myvar.append("<html>")
+		     .append("	<head>")
+		     .append("		<title></title>")
+		     .append("	</head>")
+		     .append("	<body>")
+		     .append("		<p>")
+		     .append("			Hi Team,</p>")
+		     .append("			{beginningmessage}")
+		     .append("		<table border =\"1\"1cellpadding=\"0\" cellspacing=\"0\"")
+		     .append("			<tbody>")
+		     .append("				<tr>")
+		     .append("					<td style=\"width:186px;\">")
+		     .append("						<p>")
+		     .append("							IP</p>")
+		     .append("					</td>")
+		     .append("					<td style=\"width:312px;\">")
+		     .append("						<p>")
+		     .append("							{ip}</p>")
+		     .append("					</td>")
+		     .append("				</tr>")
+		     .append("				<tr>")
+		     .append("					<td style=\"width:186px;\">")
+		     .append("						<p>")
+		     .append("							Environment Type</p>")
+		     .append("					</td>")
+		     .append("					<td style=\"width:312px;\">")
+		     .append("						<p>")
+		     .append("							{environmenttype}</p>")
+		     .append("					</td>")
+		     .append("				</tr>")
+		     .append("				<tr>")
+		     .append("					<td style=\"width:186px;\">")
+		     .append("						<p>")
+		     .append("							Status</p>")
+		     .append("					</td>")
+		     .append("					<td style=\"width:312px;\">")
+		     .append("						<p>")
+		     .append("							{status}</p>")
+		     .append("					</td>")
+		     .append("				</tr>")
+		     .append("				<tr>")
+		     .append("					<td style=\"width:186px;\">")
+		     .append("						<p>")
+		     .append("							Version</p>")
+		     .append("					</td>")
+		     .append("					<td style=\"width:312px;\">")
+		     .append("						<p>")
+		     .append("							{version}</p>")
+		     .append("					</td>")
+		     .append("				</tr>")
+		     .append("				<tr>")
+		     .append("					<td style=\"width:186px;\">")
+		     .append("						<p>")
+		     .append("							Middleware Location</p>")
+		     .append("					</td>")
+		     .append("					<td style=\"width:312px;\">")
+		     .append("						<p>")
+		     .append("							{middlewarelocation}</p>")
+		     .append("					</td>")
+		     .append("				</tr>")
+		     .append("				<tr>")
+		     .append("					<td style=\"width:186px;\">")
+		     .append("						<p>")
+		     .append("							Bits Location</p>")
+		     .append("					</td>")
+		     .append("					<td style=\"width:312px;\">")
+		     .append("						<p>")
+		     .append("							{bitslocation}</p>")
+		     .append("					</td>")
+		     .append("				</tr>")
+		     .append("				<tr>")
+		     .append("					<td style=\"width:186px;\">")
+		     .append("						<p>")
+		     .append("							Schema Prefix</p>")
+		     .append("					</td>")
+		     .append("					<td style=\"width:312px;\">")
+		     .append("						<p>")
+		     .append("							{schemaprefix}</p>")
+		     .append("					</td>")
+		     .append("				</tr>")
+		     .append("				<tr>")
+		     .append("					<td style=\"width:186px;\">")
+		     .append("						<p>")
+		     .append("							Admin Server HTTP Port</p>")
+		     .append("					</td>")
+		     .append("					<td style=\"width:312px;\">")
+		     .append("						<p>")
+		     .append("							{adminserverhttpport}</p>")
+		     .append("					</td>")
+		     .append("				</tr>")
+		     .append("				<tr>")
+		     .append("					<td style=\"width:186px;\">")
+		     .append("						<p>")
+		     .append("							Admin Server HTTPS Port</p>")
+		     .append("					</td>")
+		     .append("					<td style=\"width:312px;\">")
+		     .append("						<p>")
+		     .append("							{adminserverhttpsport}</p>")
+		     .append("					</td>")
+		     .append("				</tr>")
+		     .append("				<tr>")
+		     .append("					<td style=\"width:186px;\">")
+		     .append("						<p>")
+		     .append("							Manage Server HTTP Port</p>")
+		     .append("					</td>")
+		     .append("					<td style=\"width:312px;\">")
+		     .append("						<p>")
+		     .append("							{managedserverhttpport}</p>")
+		     .append("					</td>")
+		     .append("				</tr>")
+		     .append("				<tr>")
+		     .append("					<td style=\"width:186px;\">")
+		     .append("						<p>")
+		     .append("							Manage Server HTTPS Port</p>")
+		     .append("					</td>")
+		     .append("					<td style=\"width:312px;\">")
+		     .append("						<p>")
+		     .append("							{managedserverhttpsport}</p>")
+		     .append("					</td>")
+		     .append("				</tr>")
+		     .append("				<tr>")
+		     .append("					<td style=\"width:186px;\">")
+		     .append("						<p>")
+		     .append("							Installed By</p>")
+		     .append("					</td>")
+		     .append("					<td style=\"width:312px;\">")
+		     .append("						<p>")
+		     .append("							{installedby}</p>")
+		     .append("					</td>")
+		     .append("				</tr>")
+		     .append("				<tr>")
+		     .append("					<td style=\"width:186px;\">")
+		     .append("						<p>")
+		     .append("							VNC port</p>")
+		     .append("					</td>")
+		     .append("					<td style=\"width:312px;\">")
+		     .append("						<p>")
+		     .append("							{vncport}</p>")
+		     .append("					</td>")
+		     .append("				</tr>")
+		     .append("				<tr>")
+		     .append("					<td style=\"width:186px;\">")
+		     .append("						<p>")
+		     .append("							ICS Console Link</p>")
+		     .append("						<p>")
+		     .append("							Admin Console Link</p>")
+		     .append("						<p>")
+		     .append("							EM Console Link</p>")
+		     .append("					</td>")
+		     .append("					<td style=\"width:312px;\">")
+		     .append("						<p>")
+		     .append("							{icsconsolelink}</p>")
+		     .append("						<p>")
+		     .append("							{aminconsolelink}</p>")
+		     .append("						<p>")
+		     .append("							{emconsolelink}</p>")
+		     .append("					</td>")
+		     .append("				</tr>")
+		     .append("			</tbody>")
+		     .append("		</table>")
+		     .append("		<p>")
+		     .append("			Thanks and Regards,<br />")
+		     .append("			{username}</p>")
+		     .append("	</body>")
+		     .append("</html>");
+	
+		
+		
+	        
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("beginningmessage", getMessageForBeginning(loginForm, installation, hashMapUserDetailsForEachInstallation, activityEmail) );
+		data.put("ip",installation.getIp());
+		data.put("environmenttype",installation.getEnvironmentType());
+		if(installation.getStatus()=="A")
+			data.put("status","ACTIVE");
+		else
+			data.put("status","INACTIVE");
+		data.put("version",installation.getVersion());
+		data.put("middlewarelocation",installation.getMiddlewareLocation());
+		data.put("bitslocation",installation.getBitsLocation());
+		data.put("schemaprefix",installation.getSchemaPrefix());
+		data.put("adminserverhttpport",installation.getAdminServerHTTPPort());
+		data.put("adminserverhttpsport",installation.getAdminServerHTTPSPort());
+		data.put("managedserverhttpport",installation.getManagedServerHTTPPort());
+		data.put("managedserverhttpsport",installation.getManagedServerHTTPSPort());
+		data.put("installedby",installation.getInstalledBy());
+		data.put("vncport",installation.getVncPort());
+		
+		if(installation.getEnvironmentType().equalsIgnoreCase("ICS IC") || installation.getEnvironmentType().equalsIgnoreCase("ICS EC"))
+		{
+			data.put("icsconsolelink","http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort()+"/ics");
+		}
+		data.put("aminconsolelink","http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort()+"/console");
+		data.put("emconsolelink","http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort()+"/em");
+		data.put("username",loginForm.getUsername());
+		
+		String message = StrSubstitutor.replace(myvar,data,"{","}");
+		
+		return message;
+	}
+	
+	
 }
