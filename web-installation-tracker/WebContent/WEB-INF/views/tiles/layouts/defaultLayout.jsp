@@ -48,7 +48,9 @@ a.bg-primary:hover, a.bg-primary:focus {
 }
 </style>
 </head>
- 
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
+</script>
 <body>
     <table width="100%">
         <tr>

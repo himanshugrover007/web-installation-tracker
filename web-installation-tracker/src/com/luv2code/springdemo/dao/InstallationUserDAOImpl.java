@@ -89,7 +89,7 @@ public class InstallationUserDAOImpl extends Dao<InstallationUserDetails> implem
 
 		// delete object with primary key
 		SQLQuery theQuery = currentSession.createSQLQuery(
-				"SELECT installation_id, GROUP_CONCAT(installation_user) FROM web_installation_tracker.installation_user_details GROUP BY installation_id");
+				"SELECT installation_id, GROUP_CONCAT(installation_user) FROM installation_user_details GROUP BY installation_id");
 
 		List<Object[]> rows = theQuery.list();
 		for (Object[] row : rows) {

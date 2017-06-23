@@ -97,11 +97,26 @@ td, th {
 					value="http://${tempInstallation.ip}:${tempInstallation.adminServerHTTPPort}/em" />
 				<c:url var="icsconsole"
 					value="http://${tempInstallation.ip}:${tempInstallation.adminServerHTTPPort}/ics" />
+				<c:url var="sbconsole"
+					value="http://${tempInstallation.ip}:${tempInstallation.adminServerHTTPPort}/sbconsole" />
+					
+				<%System.out.println("-------------------------------");
+				System.out.println("${tempInstallation.managedServer2HTTPPort}"+"-"+"${tempInstallation.managedServer2HTTPPort}");
+				System.out.println("-------------------------------");%>
 
 				<c:set var="keyString">${tempInstallation.id}</c:set>
 				<c:set var="valueString">${hashMapUserDetailsForEachInstallation[keyString]}</c:set>
 				<c:set var="username">${loginForm.username}</c:set>
-
+				<c:set var="soaenvironment">
+						<c:choose>         
+					         <c:when test = "${tempInstallation.environmentType=='SOA 11G' || tempInstallation.environmentType=='SOA 12C'}">
+					            SOA 
+					         </c:when>					         
+					         <c:otherwise>
+					           Man
+					         </c:otherwise>
+					      </c:choose>
+				</c:set>
 				<tr>
 					<td>${tempInstallation.ip}<br>
 					<c:if test="${not fn:containsIgnoreCase(valueString, username)}">
@@ -115,7 +130,15 @@ td, th {
 					<td>VNC Port - ${tempInstallation.vncPort}<br>
 						<a target="_blank" href="<c:out value="${console}"/>">Admin</a><br>
 						<a target="_blank" href="<c:out value="${emconsole}"/>">EM</a><br>
-						<a target="_blank" href="<c:out value="${icsconsole}"/>">ICS</a>
+						<c:if test="${tempInstallation.environmentType=='ICS IC' || tempInstallation.environmentType=='ICS EC'}">
+				    		<a target="_blank" href="<c:out value="${icsconsole}"/>">ICS</a>
+						</c:if>
+						
+						<c:if test="${tempInstallation.environmentType=='SOA 12C' || tempInstallation.environmentType=='SOA 11G'}">
+							<c:if test="${not empty tempInstallation.managedServer2HTTPPort && not empty tempInstallation.managedServer2HTTPSPort}">
+				    		<a target="_blank" href="<c:out value="${sbconsole}"/>">Service Bus</a>
+				    		</c:if>
+						</c:if>						
 					</td>					
 					<td>${tempInstallation.middlewareLocation}<br>
 						Status - <c:if test="${tempInstallation.status == 'A'}">
@@ -130,8 +153,14 @@ td, th {
 					<td>${tempInstallation.schemaPrefix}</td>
 					<td>Adm HTTP Port: ${tempInstallation.adminServerHTTPPort}<br>
 						Adm SSL Port: ${tempInstallation.adminServerHTTPSPort}<br>
-						Man HTTP Port: ${tempInstallation.managedServerHTTPPort}<br>
-						Man SSL Port: ${tempInstallation.managedServerHTTPSPort}
+      					${soaenvironment} HTTP Port: ${tempInstallation.managedServerHTTPPort}<br>
+						${soaenvironment} SSL Port: ${tempInstallation.managedServerHTTPSPort}<br>
+						<c:if test="${tempInstallation.environmentType=='SOA 11G' || tempInstallation.environmentType=='SOA 12C'}">
+						<c:if test="${not empty tempInstallation.managedServer2HTTPPort && not empty tempInstallation.managedServer2HTTPSPort}">
+							OSB HTTP Port: ${tempInstallation.managedServer2HTTPPort}<br>
+							OSB SSL Port: ${tempInstallation.managedServer2HTTPSPort}
+							</c:if>
+						</c:if>
 					</td>
 					<td><b>Installed By: ${fn:substringBefore(tempInstallation.installedBy, ".")}</b><br><br>
 					<b>Members Using:</b><br>

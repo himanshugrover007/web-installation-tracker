@@ -2,15 +2,15 @@ package com.luv2code.springdemo.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.luv2code.springdemo.entity.Installation;
-import com.luv2code.springdemo.entity.Test;
 
 @Repository
 public class InstallationDAOImpl extends Dao<Installation> implements InstallationDAO {
@@ -79,6 +79,20 @@ public class InstallationDAOImpl extends Dao<Installation> implements Installati
 		theQuery.executeUpdate();		
 	}
 */
+	
+	@Override
+	public List<Installation> findAll() {
+		// TODO Auto-generated method stub
+		
+		Session session = sessionFactory.getCurrentSession();
+		
+		Criteria cr = session.createCriteria(Installation.class);
+
+		// To sort records in ascending order
+		cr.addOrder(Order.desc("lastUpdatedDate"));
+
+		return super.findAll(cr);
+	}
 }
 
 

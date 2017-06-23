@@ -14,6 +14,7 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.luv2code.springdemo.dao.TimeStamped;
+import com.luv2code.springdemo.validation.BlankOrPattern;
 
 @Entity
 @Table(name = "installations")
@@ -59,6 +60,14 @@ public class Installation implements TimeStamped{
 	@Column(name = "managed_server_HTTPSPort")
 	@Pattern(regexp="[\\d]{4}")
 	private String managedServerHTTPSPort;
+	
+	@Column(name = "managed_server_2_HTTPPort")
+	@BlankOrPattern(regexp="[\\d]{4}", message = "{BlankOrPattern.installation.managedServer2HTTPPort}")
+	private String managedServer2HTTPPort;
+
+	@Column(name = "managed_server_2_HTTPSPort")
+	@BlankOrPattern(regexp="[\\d]{4}", message = "{BlankOrPattern.installation.managedServer2HTTPSPort}")
+	private String managedServer2HTTPSPort;
 	
 	@Column(name = "status")
 	@NotEmpty
@@ -163,6 +172,22 @@ public class Installation implements TimeStamped{
 
 	public void setManagedServerHTTPSPort(String managedServerHTTPSPort) {
 		this.managedServerHTTPSPort = managedServerHTTPSPort;
+	}
+
+	public String getManagedServer2HTTPPort() {
+		return managedServer2HTTPPort;
+	}
+
+	public void setManagedServer2HTTPPort(String managedServer2HTTPPort) {
+		this.managedServer2HTTPPort = managedServer2HTTPPort;
+	}
+
+	public String getManagedServer2HTTPSPort() {
+		return managedServer2HTTPSPort;
+	}
+
+	public void setManagedServer2HTTPSPort(String managedServer2HTTPSPort) {
+		this.managedServer2HTTPSPort = managedServer2HTTPSPort;
 	}
 
 	public String getStatus() {

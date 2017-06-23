@@ -227,6 +227,12 @@ public class MailService {
 	{
 
 		StringBuilder myvar = new StringBuilder(); 
+		String environmentSOAorICS="";
+		if(installation.getEnvironmentType().equalsIgnoreCase("SOA 11G") || installation.getEnvironmentType().equalsIgnoreCase("SOA 12C"))
+	     {
+			environmentSOAorICS="SOA ";
+	     }		
+		
 		myvar.append("<html>")
 		     .append("	<head>")
 		     .append("		<title></title>")
@@ -330,7 +336,7 @@ public class MailService {
 		     .append("				<tr>")
 		     .append("					<td style=\"width:186px;\">")
 		     .append("						<p>")
-		     .append("							Manage Server HTTP Port</p>")
+		     .append("							"+ environmentSOAorICS +"Managed Server HTTP Port</p>")
 		     .append("					</td>")
 		     .append("					<td style=\"width:312px;\">")
 		     .append("						<p>")
@@ -340,14 +346,38 @@ public class MailService {
 		     .append("				<tr>")
 		     .append("					<td style=\"width:186px;\">")
 		     .append("						<p>")
-		     .append("							Manage Server HTTPS Port</p>")
+		     .append("							"+ environmentSOAorICS +"Managed Server HTTPS Port</p>")
 		     .append("					</td>")
 		     .append("					<td style=\"width:312px;\">")
 		     .append("						<p>")
 		     .append("							{managedserverhttpsport}</p>")
 		     .append("					</td>")
-		     .append("				</tr>")
-		     .append("				<tr>")
+		     .append("				</tr>");
+		
+	     if(installation.getEnvironmentType().equalsIgnoreCase("SOA 11G") || installation.getEnvironmentType().equalsIgnoreCase("SOA 12C"))
+	     {
+			myvar.append("				<tr>")
+			     .append("					<td style=\"width:186px;\">")
+			     .append("						<p>")
+			     .append("							OSB Managed Server HTTP Port</p>")
+			     .append("					</td>")
+			     .append("					<td style=\"width:312px;\">")
+			     .append("						<p>")
+			     .append("							{managedserver2httpport}</p>")
+			     .append("					</td>")
+			     .append("				</tr>")
+			     .append("				<tr>")
+			     .append("					<td style=\"width:186px;\">")
+			     .append("						<p>")
+			     .append("							OSB Managed Server HTTPS Port</p>")
+			     .append("					</td>")
+			     .append("					<td style=\"width:312px;\">")
+			     .append("						<p>")
+			     .append("							{managedserver2httpsport}</p>")
+			     .append("					</td>")
+			     .append("				</tr>");
+	     }
+		myvar.append("				<tr>")
 		     .append("					<td style=\"width:186px;\">")
 		     .append("						<p>")
 		     .append("							Installed By</p>")
@@ -368,22 +398,50 @@ public class MailService {
 		     .append("					</td>")
 		     .append("				</tr>")
 		     .append("				<tr>")
-		     .append("					<td style=\"width:186px;\">")
-		     .append("						<p>")
-		     .append("							ICS Console Link</p>")
-		     .append("						<p>")
+		     .append("					<td style=\"width:186px;\">");		     
+		if(installation.getEnvironmentType().equalsIgnoreCase("ICS IC") || installation.getEnvironmentType().equalsIgnoreCase("ICS EC"))
+		     {
+				myvar.append("						<p>")
+				     .append("							ICS Console Link</p>");
+		     }
+		
+		myvar.append("						<p>")
 		     .append("							Admin Console Link</p>")
 		     .append("						<p>")
-		     .append("							EM Console Link</p>")
-		     .append("					</td>")
-		     .append("					<td style=\"width:312px;\">")
+		     .append("							EM Console Link</p>");
+	    if(installation.getEnvironmentType().equalsIgnoreCase("SOA 12C") || installation.getEnvironmentType().equalsIgnoreCase("SOA 11G"))
+		     {
+	    		if(installation.getManagedServer2HTTPPort()!=null && installation.getManagedServer2HTTPSPort()!=null)
+				{
+	    			myvar.append("						<p>")
+	    				 .append("							Service Bus Console Link</p>");
+				}
+		     }
+		     
+	    myvar.append("					</td>")
+		     .append("					<td style=\"width:312px;\">");
+		
+		if(installation.getEnvironmentType().equalsIgnoreCase("ICS IC") || installation.getEnvironmentType().equalsIgnoreCase("ICS EC"))
+	     {
+			myvar.append("						<p>")
+		     .append("							{icsconsolelink}</p>");
+	     }
+		
+		myvar.append("						<p>")
+		     .append("							{adminconsolelink}</p>")
 		     .append("						<p>")
-		     .append("							{icsconsolelink}</p>")
-		     .append("						<p>")
-		     .append("							{aminconsolelink}</p>")
-		     .append("						<p>")
-		     .append("							{emconsolelink}</p>")
-		     .append("					</td>")
+		     .append("							{emconsolelink}</p>");
+		
+		if(installation.getEnvironmentType().equalsIgnoreCase("SOA 12C") || installation.getEnvironmentType().equalsIgnoreCase("SOA 11G"))
+		{
+			if(installation.getManagedServer2HTTPPort()!=null && installation.getManagedServer2HTTPSPort()!=null)
+			{
+				myvar.append("						<p>")
+					 .append("							{sbconsolelink}</p>");
+			}
+		}     
+		
+		myvar.append("					</td>")
 		     .append("				</tr>")
 		     .append("			</tbody>")
 		     .append("		</table>")
@@ -400,7 +458,7 @@ public class MailService {
 		data.put("beginningmessage", getMessageForBeginning(loginForm, installation, hashMapUserDetailsForEachInstallation, activityEmail) );
 		data.put("ip",installation.getIp());
 		data.put("environmenttype",installation.getEnvironmentType());
-		if(installation.getStatus()=="A")
+		if(installation.getStatus().equalsIgnoreCase("A"))
 			data.put("status","ACTIVE");
 		else
 			data.put("status","INACTIVE");
@@ -412,6 +470,8 @@ public class MailService {
 		data.put("adminserverhttpsport",installation.getAdminServerHTTPSPort());
 		data.put("managedserverhttpport",installation.getManagedServerHTTPPort());
 		data.put("managedserverhttpsport",installation.getManagedServerHTTPSPort());
+		data.put("managedserver2httpport",installation.getManagedServer2HTTPPort());
+		data.put("managedserver2httpsport",installation.getManagedServer2HTTPSPort());
 		data.put("installedby",installation.getInstalledBy());
 		data.put("vncport",installation.getVncPort());
 		
@@ -419,8 +479,17 @@ public class MailService {
 		{
 			data.put("icsconsolelink","http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort()+"/ics");
 		}
-		data.put("aminconsolelink","http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort()+"/console");
+		
+		data.put("adminconsolelink","http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort()+"/console");
 		data.put("emconsolelink","http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort()+"/em");
+		
+		if(installation.getEnvironmentType().equalsIgnoreCase("SOA 12C") || installation.getEnvironmentType().equalsIgnoreCase("SOA 11G"))
+		{
+			if(installation.getManagedServer2HTTPPort()!=null && installation.getManagedServer2HTTPSPort()!=null)
+			data.put("sbconsolelink","http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort()+"/sbconsole");
+		}
+		
+
 		data.put("username",loginForm.getUsername());
 		
 		String message = StrSubstitutor.replace(myvar,data,"{","}");

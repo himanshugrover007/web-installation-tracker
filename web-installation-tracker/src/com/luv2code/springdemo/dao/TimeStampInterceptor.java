@@ -23,6 +23,8 @@ public class TimeStampInterceptor extends EmptyInterceptor {
             if (entity instanceof TimeStamped) {
                 int indexOf =  com.mchange.v1.util.ArrayUtils.indexOf(propertyNames, "createdDate");
                 state[indexOf] = new Date();
+                indexOf =  com.mchange.v1.util.ArrayUtils.indexOf(propertyNames, "lastUpdatedDate");
+                state[indexOf] = new Date();
                 return true;
             }
             return false;

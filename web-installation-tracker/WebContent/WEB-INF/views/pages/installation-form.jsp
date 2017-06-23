@@ -8,6 +8,29 @@
 
 </head>
 
+<script type="text/javascript">
+(function($) {
+	$(document).ready(function(){		
+	var v = $("#environmentType option:selected")[0].value;
+			toggleFields();
+			$('#environmentType').change(function() {
+				var v = $("#environmentType option:selected")[0].value;
+				toggleFields();
+			});
+		});
+	})(jQuery);
+
+	function toggleFields() {
+		var v = $("#environmentType option:selected")[0].value;
+		if (v === '' || v === 'ICS IC' || v === 'ICS EC') {
+			$('.onpremise').hide();
+		} else {
+			$('.onpremise').show();
+		}
+	}
+</script>
+
+
 <body>
 	<h2>Add Installation Details</h2>
 
@@ -30,15 +53,14 @@
 				</tr>
 				<tr>
 					<td><label>Environment Type:</label></td>
-					<td><form:select path="environmentType">
+					<td><form:select path="environmentType" id="environmentType">
 							<form:option value="" label="--- Select ---" />
 							<form:options items="${environmentTypeList}" />
 						</form:select> <form:errors path="environmentType" cssClass="error" /></td>
-
 				</tr>
 				
 				<tr>
-					<td><label>Status (Select A-Active, I-Inactive):</label></td>
+					<td><label>Status:</label></td>
 					<td><form:select path="status">
 							<form:option value="" label="--- Select ---" />
 							<form:options items="${installationStatuses}" />
@@ -83,15 +105,27 @@
 				</tr>
 
 				<tr>
-					<td><label>Managed Server HTTP Port:</label></td>
+					<td><label class="onpremise">SOA -&nbsp</label><label>Managed Server HTTP Port:</label></td>
 					<td><form:input path="managedServerHTTPPort" size="25" maxlength="4"/> <form:errors
 							path="managedServerHTTPPort" cssClass="error" /></td>
 				</tr>
 
 				<tr>
-					<td><label>Managed Server HTTPS Port:</label></td>
+					<td><label class="onpremise">SOA -&nbsp</label><label>Managed Server HTTPS Port:</label></td>
 					<td><form:input path="managedServerHTTPSPort" size="25" maxlength="4"/> <form:errors
 							path="managedServerHTTPSPort" cssClass="error" /></td>
+				</tr>
+				
+				<tr class="onpremise">
+					<td><label>OSB - Managed Server HTTP Port:</label></td>
+					<td><form:input path="managedServer2HTTPPort" size="25" maxlength="4"/> <form:errors
+							path="managedServer2HTTPPort" cssClass="error" /></td>
+				</tr>
+
+				<tr class="onpremise">
+					<td><label>OSB - Managed Server HTTPS Port:</label></td>
+					<td><form:input path="managedServer2HTTPSPort" size="25" maxlength="4"/> <form:errors
+							path="managedServer2HTTPSPort" cssClass="error" /></td>
 				</tr>
 				
 				<tr>

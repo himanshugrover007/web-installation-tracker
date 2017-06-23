@@ -192,8 +192,8 @@ public class InstallationController {
 	
 	private Map getInstallationStatuses() {
 		Map<String, String> installationStatuses = new LinkedHashMap<String, String>();
-		installationStatuses.put("A", "A");
-		installationStatuses.put("I", "I");
+		installationStatuses.put("A", "Active");
+		installationStatuses.put("I", "Inactive");
 		return installationStatuses;
 	}
 	
