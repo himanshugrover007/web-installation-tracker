@@ -100,10 +100,6 @@ td, th {
 				<c:url var="sbconsole"
 					value="http://${tempInstallation.ip}:${tempInstallation.adminServerHTTPPort}/sbconsole" />
 					
-				<%System.out.println("-------------------------------");
-				System.out.println("${tempInstallation.managedServer2HTTPPort}"+"-"+"${tempInstallation.managedServer2HTTPPort}");
-				System.out.println("-------------------------------");%>
-
 				<c:set var="keyString">${tempInstallation.id}</c:set>
 				<c:set var="valueString">${hashMapUserDetailsForEachInstallation[keyString]}</c:set>
 				<c:set var="username">${loginForm.username}</c:set>
