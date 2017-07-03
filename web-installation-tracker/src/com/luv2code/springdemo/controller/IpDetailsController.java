@@ -71,6 +71,7 @@ public class IpDetailsController {
 		else {
 			IpInfoDetails ipInfoDetailsExisting = ipInfoDetailsService.getIpInfoDetails(ipInfoDetails.getId());
 			ipInfoDetails.setCreatedDate(ipInfoDetailsExisting.getCreatedDate());
+			ipInfoDetails.setCreatedBy(ipInfoDetailsExisting.getCreatedBy());
 			ipInfoDetails.setUpdatedBy(loginform.getUsername());
 			ipInfoDetailsService.updateIpInfoDetails(ipInfoDetails);
 		}
