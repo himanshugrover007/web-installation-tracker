@@ -35,7 +35,7 @@ tr:nth-of-type(odd) {
 }
 
 th {
-	background: #333;
+	background: #585858;
 	color: white;
 	font-weight: bold;
 }
@@ -59,10 +59,10 @@ td, th {
 			<th>Middleware Location<br>Status<br>Version<br>Bits Location</th>
 			<th>Schema<br>Prefix
 			</th>
-			<th>Adm HTTP Port<br>
-			Adm SSL Port<br>
-			Man HTTP Port<br>
-			Man SSL Port
+			<th>Admin and<br>
+			Managed Servers<br>
+			HTTP/HTTPS<br>
+			Ports
 			</th>		
 			<th>Installed By<br>
 				Members Using
@@ -97,9 +97,11 @@ td, th {
 					value="http://${tempInstallation.ip}:${tempInstallation.adminServerHTTPPort}/em" />
 				<c:url var="icsconsole"
 					value="http://${tempInstallation.ip}:${tempInstallation.adminServerHTTPPort}/ics" />
+				<c:url var="ecicsconsole"
+					value="http://${tempInstallation.ip}:${tempInstallation.managedServerHTTPPort}/ic/integration/home/faces/icslogin.jspx" />
 				<c:url var="sbconsole"
 					value="http://${tempInstallation.ip}:${tempInstallation.adminServerHTTPPort}/sbconsole" />
-					
+										
 				<c:set var="keyString">${tempInstallation.id}</c:set>
 				<c:set var="valueString">${hashMapUserDetailsForEachInstallation[keyString]}</c:set>
 				<c:set var="username">${loginForm.username}</c:set>
@@ -126,9 +128,12 @@ td, th {
 					<td>VNC Port - ${tempInstallation.vncPort}<br>
 						<a target="_blank" href="<c:out value="${console}"/>">Admin</a><br>
 						<a target="_blank" href="<c:out value="${emconsole}"/>">EM</a><br>
-						<c:if test="${tempInstallation.environmentType=='ICS IC' || tempInstallation.environmentType=='ICS EC'}">
+						<c:if test="${tempInstallation.environmentType=='ICS IC'}">
 				    		<a target="_blank" href="<c:out value="${icsconsole}"/>">ICS</a>
 						</c:if>
+						<c:if test="${tempInstallation.environmentType=='ICS EC'}">
+				    		<a target="_blank" href="<c:out value="${ecicsconsole}"/>">ICS</a>
+						</c:if>					
 						
 						<c:if test="${tempInstallation.environmentType=='SOA 12C' || tempInstallation.environmentType=='SOA 11G'}">
 							<c:if test="${not empty tempInstallation.managedServer2HTTPPort && not empty tempInstallation.managedServer2HTTPSPort}">

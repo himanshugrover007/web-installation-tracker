@@ -59,13 +59,13 @@ a.bg-primary:hover, a.bg-primary:focus {
             </td>
         </tr>
         <tr>
-            <td>
+            <td bgcolor="#333">
                  <tiles:insertAttribute name="menu" />
              </td>
         </tr>
-        <tr>
-           
-            <td width="100%" style="padding: 6px;">
+        <tr valign="top" height="350px">
+           <!-- style="padding: 6px;" -->
+            <td width="100%" style="padding: 0px 2px 2px 2px;">
                  <tiles:insertAttribute name="body" />
              </td>
         </tr>

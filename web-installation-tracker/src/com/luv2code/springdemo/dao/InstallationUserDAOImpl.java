@@ -19,9 +19,6 @@ public class InstallationUserDAOImpl extends Dao<InstallationUserDetails> implem
 		super(InstallationUserDetails.class);
 	}
 
-	// need to inject the session factory
-	@Autowired
-	private SessionFactory sessionFactory;
 	/*
 	 * /@Override public List<Installation> getInstallations() {
 	 * 

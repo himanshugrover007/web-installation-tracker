@@ -90,6 +90,12 @@ public class Installation implements TimeStamped{
 	@NotEmpty
 	private String bitsLocation;
 	
+	@Column(name = "deleted")
+	private int deleted;
+	
+	@Column(name = "updated_by")
+	private String updatedBy;
+	
 	public Installation() {
 
 	}
@@ -220,6 +226,22 @@ public class Installation implements TimeStamped{
 
 	public void setBitsLocation(String bitsLocation) {
 		this.bitsLocation = bitsLocation;
+	}
+
+	public int getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(int deleted) {
+		this.deleted = deleted;
+	}
+
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
 	}
 
 	@Temporal(javax.persistence.TemporalType.TIMESTAMP)

@@ -87,8 +87,8 @@ public class InstallationDAOImpl extends Dao<Installation> implements Installati
 		Session session = sessionFactory.getCurrentSession();
 		
 		Criteria cr = session.createCriteria(Installation.class);
-
 		// To sort records in ascending order
+		cr.add(Restrictions.eq("deleted", 0));
 		cr.addOrder(Order.desc("lastUpdatedDate"));
 
 		return super.findAll(cr);

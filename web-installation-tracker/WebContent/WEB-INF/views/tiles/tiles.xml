@@ -38,7 +38,19 @@
        <put-attribute name="title" value="Add new Installation details" />  
        <put-attribute name="body" value="/WEB-INF/views/pages/installation-form.jsp" />  
    </definition>  
-      
+   
+    <!-- Product Page -->
+   <definition name="ipinfodetails-form" extends="base-definition">  
+       <put-attribute name="title" value="Add Server public ip, domain name and open ports info" />  
+       <put-attribute name="body" value="/WEB-INF/views/pages/ipinfodetails-form.jsp" />  
+   </definition> 
+
+	<!-- IP INFO DETAILS Page -->
+   <definition name="list-ipinfodetails" extends="base-definition">  
+       <put-attribute name="title" value="View All Server public ip, domain name and open ports info" />  
+       <put-attribute name="body" value="/WEB-INF/views/pages/list-ipinfodetails.jsp" />  
+   </definition>  
+   
    <!-- Contact-us Page -->
    <definition name="contactus" extends="base-definition">  
        <put-attribute name="title" value="Contact Us" />  

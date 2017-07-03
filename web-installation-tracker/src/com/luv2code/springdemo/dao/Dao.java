@@ -61,7 +61,7 @@ public abstract class Dao<T> implements GenericDaoInterface<T> {
     </bean>  
      */
     @Autowired
-    private SessionFactory sessionFactory;
+    protected SessionFactory sessionFactory;
     
     
     public Dao(Class<T> entityClass) {

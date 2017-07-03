@@ -244,7 +244,7 @@ public class MailService {
 		     .append("		<table border =\"1\"1cellpadding=\"0\" cellspacing=\"0\"")
 		     .append("			<tbody>")
 		     .append("				<tr>")
-		     .append("					<td style=\"width:186px;\">")
+		     .append("					<td style=\"width:200px;\">")
 		     .append("						<p>")
 		     .append("							IP</p>")
 		     .append("					</td>")
@@ -254,7 +254,7 @@ public class MailService {
 		     .append("					</td>")
 		     .append("				</tr>")
 		     .append("				<tr>")
-		     .append("					<td style=\"width:186px;\">")
+		     .append("					<td style=\"width:200px;\">")
 		     .append("						<p>")
 		     .append("							Environment Type</p>")
 		     .append("					</td>")
@@ -264,7 +264,7 @@ public class MailService {
 		     .append("					</td>")
 		     .append("				</tr>")
 		     .append("				<tr>")
-		     .append("					<td style=\"width:186px;\">")
+		     .append("					<td style=\"width:200px;\">")
 		     .append("						<p>")
 		     .append("							Status</p>")
 		     .append("					</td>")
@@ -274,7 +274,7 @@ public class MailService {
 		     .append("					</td>")
 		     .append("				</tr>")
 		     .append("				<tr>")
-		     .append("					<td style=\"width:186px;\">")
+		     .append("					<td style=\"width:200px;\">")
 		     .append("						<p>")
 		     .append("							Version</p>")
 		     .append("					</td>")
@@ -284,7 +284,7 @@ public class MailService {
 		     .append("					</td>")
 		     .append("				</tr>")
 		     .append("				<tr>")
-		     .append("					<td style=\"width:186px;\">")
+		     .append("					<td style=\"width:200px;\">")
 		     .append("						<p>")
 		     .append("							Middleware Location</p>")
 		     .append("					</td>")
@@ -294,7 +294,7 @@ public class MailService {
 		     .append("					</td>")
 		     .append("				</tr>")
 		     .append("				<tr>")
-		     .append("					<td style=\"width:186px;\">")
+		     .append("					<td style=\"width:200px;\">")
 		     .append("						<p>")
 		     .append("							Bits Location</p>")
 		     .append("					</td>")
@@ -304,7 +304,7 @@ public class MailService {
 		     .append("					</td>")
 		     .append("				</tr>")
 		     .append("				<tr>")
-		     .append("					<td style=\"width:186px;\">")
+		     .append("					<td style=\"width:200px;\">")
 		     .append("						<p>")
 		     .append("							Schema Prefix</p>")
 		     .append("					</td>")
@@ -314,7 +314,7 @@ public class MailService {
 		     .append("					</td>")
 		     .append("				</tr>")
 		     .append("				<tr>")
-		     .append("					<td style=\"width:186px;\">")
+		     .append("					<td style=\"width:200px;\">")
 		     .append("						<p>")
 		     .append("							Admin Server HTTP Port</p>")
 		     .append("					</td>")
@@ -324,7 +324,7 @@ public class MailService {
 		     .append("					</td>")
 		     .append("				</tr>")
 		     .append("				<tr>")
-		     .append("					<td style=\"width:186px;\">")
+		     .append("					<td style=\"width:200px;\">")
 		     .append("						<p>")
 		     .append("							Admin Server HTTPS Port</p>")
 		     .append("					</td>")
@@ -334,7 +334,7 @@ public class MailService {
 		     .append("					</td>")
 		     .append("				</tr>")
 		     .append("				<tr>")
-		     .append("					<td style=\"width:186px;\">")
+		     .append("					<td style=\"width:200px;\">")
 		     .append("						<p>")
 		     .append("							"+ environmentSOAorICS +"Managed Server HTTP Port</p>")
 		     .append("					</td>")
@@ -344,7 +344,7 @@ public class MailService {
 		     .append("					</td>")
 		     .append("				</tr>")
 		     .append("				<tr>")
-		     .append("					<td style=\"width:186px;\">")
+		     .append("					<td style=\"width:200px;\">")
 		     .append("						<p>")
 		     .append("							"+ environmentSOAorICS +"Managed Server HTTPS Port</p>")
 		     .append("					</td>")
@@ -356,29 +356,34 @@ public class MailService {
 		
 	     if(installation.getEnvironmentType().equalsIgnoreCase("SOA 11G") || installation.getEnvironmentType().equalsIgnoreCase("SOA 12C"))
 	     {
-			myvar.append("				<tr>")
-			     .append("					<td style=\"width:186px;\">")
-			     .append("						<p>")
-			     .append("							OSB Managed Server HTTP Port</p>")
-			     .append("					</td>")
-			     .append("					<td style=\"width:312px;\">")
-			     .append("						<p>")
-			     .append("							{managedserver2httpport}</p>")
-			     .append("					</td>")
-			     .append("				</tr>")
-			     .append("				<tr>")
-			     .append("					<td style=\"width:186px;\">")
-			     .append("						<p>")
-			     .append("							OSB Managed Server HTTPS Port</p>")
-			     .append("					</td>")
-			     .append("					<td style=\"width:312px;\">")
-			     .append("						<p>")
-			     .append("							{managedserver2httpsport}</p>")
-			     .append("					</td>")
-			     .append("				</tr>");
+	    	 if(installation.getManagedServer2HTTPPort()!=null && !installation.getManagedServer2HTTPPort().isEmpty())
+	    	 { myvar.append("				<tr>")
+				     .append("					<td style=\"width:200px;\">")
+				     .append("						<p>")
+				     .append("							OSB Managed Server HTTP Port</p>")
+				     .append("					</td>")
+				     .append("					<td style=\"width:312px;\">")
+				     .append("						<p>")
+				     .append("							{managedserver2httpport}</p>")
+				     .append("					</td>")
+				     .append("				</tr>");
+	    	 }
+	    	 if(installation.getManagedServer2HTTPSPort()!=null && !installation.getManagedServer2HTTPSPort().isEmpty())
+	    	 {
+				myvar.append("				<tr>")
+				     .append("					<td style=\"width:200px;\">")
+				     .append("						<p>")
+				     .append("							OSB Managed Server HTTPS Port</p>")
+				     .append("					</td>")
+				     .append("					<td style=\"width:312px;\">")
+				     .append("						<p>")
+				     .append("							{managedserver2httpsport}</p>")
+				     .append("					</td>")
+				     .append("				</tr>");
+	    	 }
 	     }
 		myvar.append("				<tr>")
-		     .append("					<td style=\"width:186px;\">")
+		     .append("					<td style=\"width:200px;\">")
 		     .append("						<p>")
 		     .append("							Installed By</p>")
 		     .append("					</td>")
@@ -388,7 +393,7 @@ public class MailService {
 		     .append("					</td>")
 		     .append("				</tr>")
 		     .append("				<tr>")
-		     .append("					<td style=\"width:186px;\">")
+		     .append("					<td style=\"width:200px;\">")
 		     .append("						<p>")
 		     .append("							VNC port</p>")
 		     .append("					</td>")
@@ -398,7 +403,7 @@ public class MailService {
 		     .append("					</td>")
 		     .append("				</tr>")
 		     .append("				<tr>")
-		     .append("					<td style=\"width:186px;\">");		     
+		     .append("					<td style=\"width:200px;\">");		     
 		if(installation.getEnvironmentType().equalsIgnoreCase("ICS IC") || installation.getEnvironmentType().equalsIgnoreCase("ICS EC"))
 		     {
 				myvar.append("						<p>")
@@ -475,9 +480,13 @@ public class MailService {
 		data.put("installedby",installation.getInstalledBy());
 		data.put("vncport",installation.getVncPort());
 		
-		if(installation.getEnvironmentType().equalsIgnoreCase("ICS IC") || installation.getEnvironmentType().equalsIgnoreCase("ICS EC"))
+		if(installation.getEnvironmentType().equalsIgnoreCase("ICS IC"))
 		{
 			data.put("icsconsolelink","http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort()+"/ics");
+		}
+		else if(installation.getEnvironmentType().equalsIgnoreCase("ICS EC"))
+		{
+			data.put("icsconsolelink","http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort()+"/ic/integration/home/faces/icslogin.jspx");
 		}
 		
 		data.put("adminconsolelink","http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort()+"/console");

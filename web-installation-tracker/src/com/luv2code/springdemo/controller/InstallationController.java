@@ -23,9 +23,11 @@ import com.luv2code.springdemo.constants.ActivityEmail;
 import com.luv2code.springdemo.entity.Installation;
 import com.luv2code.springdemo.entity.InstallationUserDetails;
 import com.luv2code.springdemo.entity.LoginForm;
+import com.luv2code.springdemo.entity.custom.validator.InstallationValidator;
 import com.luv2code.springdemo.service.InstallationService;
 import com.luv2code.springdemo.service.InstallationUserService;
 import com.luv2code.springdemo.service.MailService;
+import com.luv2code.springdemo.util.InstallationUtility;
 
 @EnableWebMvc
 @Controller
@@ -41,6 +43,9 @@ public class InstallationController {
 	
 	@Autowired
 	private MailService mailService;
+	
+	@Autowired
+	private InstallationValidator installationValidator;
 
 	@GetMapping("/list")
 	public String listInstallations(Model theModel,HttpServletRequest httpServletRequest) {
@@ -65,21 +70,22 @@ public class InstallationController {
 		Installation theInstallation = new Installation();
 
 		theModel.addAttribute("installation", theInstallation);
-		theModel.addAttribute("ipList", getIPs());
-		theModel.addAttribute("environmentTypeList", getEnvironmentTypes());
-		theModel.addAttribute("installationStatuses", getInstallationStatuses());
+		theModel.addAttribute("ipList", InstallationUtility.getIPs());
+		theModel.addAttribute("environmentTypeList", InstallationUtility.getEnvironmentTypes());
+		theModel.addAttribute("installationStatuses", InstallationUtility.getInstallationStatuses());
 		return "installation-form";
 	}
 
 	@PostMapping("/saveInstallation")
 	public String saveInstallation(@ModelAttribute("installation") @Valid Installation theInstallation,
 			BindingResult bindingResult, Model theModel,HttpServletRequest httpServletRequest) {
-
+		
+		installationValidator.validate(theInstallation, bindingResult);
 		if (bindingResult.hasErrors()) {
 			theModel.addAttribute("installation", theInstallation);
-			theModel.addAttribute("ipList", getIPs());
-			theModel.addAttribute("environmentTypeList", getEnvironmentTypes());
-			theModel.addAttribute("installationStatuses", getInstallationStatuses());			
+			theModel.addAttribute("ipList", InstallationUtility.getIPs());
+			theModel.addAttribute("environmentTypeList", InstallationUtility.getEnvironmentTypes());
+			theModel.addAttribute("installationStatuses", InstallationUtility.getInstallationStatuses());			
 			return "installation-form";
 		}
 
@@ -97,6 +103,7 @@ public class InstallationController {
 			// get the installation from our service
 			Installation theInstallationExisting = installationService.getInstallation(theInstallation.getId());
 			theInstallation.setCreatedDate(theInstallationExisting.getCreatedDate());
+			theInstallation.setUpdatedBy(loginform.getUsername());
 			installationService.updateInstallation(theInstallation);
 			mailService.sendMail(loginform,mailService.getMessage(loginform, theInstallation, hashMapUserDetailsForEachInstallation, ActivityEmail.UPDATE));
 			
@@ -112,9 +119,9 @@ public class InstallationController {
 
 		// set installation as a model attribute to pre-populate the form
 		theModel.addAttribute("installation", theInstallation);
-		theModel.addAttribute("ipList", getIPs());
-		theModel.addAttribute("environmentTypeList", getEnvironmentTypes());
-		theModel.addAttribute("installationStatuses", getInstallationStatuses());			
+		theModel.addAttribute("ipList", InstallationUtility.getIPs());
+		theModel.addAttribute("environmentTypeList", InstallationUtility.getEnvironmentTypes());
+		theModel.addAttribute("installationStatuses", InstallationUtility.getInstallationStatuses());			
 		// send over to our form
 		return "installation-form";
 	}
@@ -129,7 +136,11 @@ public class InstallationController {
 		
 		Installation theInstallation = installationService.getInstallation(theInstallationId);
 		HashMap<String, String> hashMapUserDetailsForEachInstallation= installationUserService.getUserDetailsForEachInstallation();
-		installationService.deleteInstallation(theInstallationId);
+		//installationService.deleteInstallation(theInstallationId);
+		theInstallation.setCreatedDate(theInstallation.getCreatedDate());
+		theInstallation.setUpdatedBy(loginform.getUsername());
+		theInstallation.setDeleted(1);
+		installationService.updateInstallation(theInstallation);
 		installationUserService.deleteUserFromInstallationUserTable(theInstallationId);
 		mailService.sendMail(loginform,mailService.getMessage(loginform, theInstallation, hashMapUserDetailsForEachInstallation,  ActivityEmail.DELETE));
 		return "redirect:/installation/list";
@@ -167,34 +178,4 @@ public class InstallationController {
 		return "redirect:/installation/list";
 	}
 
-	private Map getIPs() {
-		Map<String, String> ips = new LinkedHashMap<String, String>();
-		ips.put("10.30.32.16", "10.30.32.16");
-		ips.put("10.30.32.76", "10.30.32.76");
-		ips.put("10.30.32.83", "10.30.32.83");
-		ips.put("10.30.32.101", "10.30.32.101");
-		ips.put("10.30.32.126", "10.30.32.126");
-		ips.put("10.30.32.147", "10.30.32.147");
-		ips.put("10.30.32.166", "10.30.32.166");
-		ips.put("10.30.32.167", "10.30.32.167");
-		ips.put("10.30.32.168", "10.30.32.168");
-		return ips;
-	}
-	
-	private Map getEnvironmentTypes() {
-		Map<String, String> environmentTypes = new LinkedHashMap<String, String>();
-		environmentTypes.put("ICS IC", "ICS IC");
-		environmentTypes.put("ICS EC", "ICS EC");
-		environmentTypes.put("SOA 12C", "SOA 12C");
-		environmentTypes.put("SOA 11G", "SOA 11G");
-		return environmentTypes;
-	}
-	
-	private Map getInstallationStatuses() {
-		Map<String, String> installationStatuses = new LinkedHashMap<String, String>();
-		installationStatuses.put("A", "Active");
-		installationStatuses.put("I", "Inactive");
-		return installationStatuses;
-	}
-	
 }

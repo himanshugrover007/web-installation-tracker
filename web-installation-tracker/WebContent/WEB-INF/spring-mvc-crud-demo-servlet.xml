@@ -40,7 +40,7 @@
 		destroy-method="close">
 		<property name="driverClass" value="com.mysql.jdbc.Driver" />
 		<property name="jdbcUrl"
-			value="jdbc:mysql://10.30.32.83:3306/web_installation_tracker?useSSL=false" />
+			value="jdbc:mysql://10.30.32.83:3306/web_installation_tracker_stag?useSSL=false" />
 		<property name="user" value="springstudent" />
 		<property name="password" value="springstudent" />
 
