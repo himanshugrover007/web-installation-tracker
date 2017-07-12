@@ -53,7 +53,7 @@ td, th {
 			<th>IP</th>
 			<th>Public IP</th>
 			<th>Public Domain Name</th>
-			<th>Open Ports</th>
+			<th>Public Open Ports</th>
 			<th>Action</th>
 		</tr>
 		<tbody id="data">
@@ -70,11 +70,16 @@ td, th {
 					<c:param name="id" value="${ipinfodetails.id}" />
 				</c:url>
 				
+				<c:set var="keyString">${ipinfodetails.ip}</c:set>
+				<c:set var="valueString">${hashMapInUseAndAvailablePortsPerIP[keyString]}</c:set>
+				
 				<tr>
 					<td>${ipinfodetails.ip}</td>
 					<td>${ipinfodetails.publicIp}</td>
 					<td>${ipinfodetails.publicDomainName}</td>
-					<td>${ipinfodetails.publicPorts}</td>
+					<td><b>In-Use :</b> <font color="white" style="background-color: red;">${hashMapInUseAndAvailablePortsPerIP[keyString].portInUse}</font><br>
+						<b>Available :</b> <font color="white" style="background-color: green;">${hashMapInUseAndAvailablePortsPerIP[keyString].portAvailable}</font>
+					</td>
 					<td>
 						<!-- display the update link --> <a href="${updateLink}">Update</a><br>
 						<a href="${deleteLink}"

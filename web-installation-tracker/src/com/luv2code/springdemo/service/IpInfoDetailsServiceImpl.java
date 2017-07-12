@@ -1,5 +1,6 @@
 package com.luv2code.springdemo.service;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,12 @@ public class IpInfoDetailsServiceImpl implements IpInfoDetailsService {
 		IpInfoDetails ipInfoDetails = new IpInfoDetails()		;
 		ipInfoDetails.setId(theId);
 		ipInfoDetailsDAO.delete(ipInfoDetails);
+	}
+	
+	@Override
+	@Transactional
+	public HashMap<String, String> getPortsUsedInEachIP(){		
+		return ipInfoDetailsDAO.getPortsUsedInEachIP();
 	}
 
 }

@@ -1,6 +1,8 @@
 package com.luv2code.springdemo.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import com.luv2code.springdemo.dto.PortsInUseAndAvailable;
 import com.luv2code.springdemo.entity.IpInfoDetails;
 import com.luv2code.springdemo.entity.LoginForm;
 import com.luv2code.springdemo.service.IpInfoDetailsService;
@@ -28,20 +31,64 @@ public class IpDetailsController {
 
 	@Autowired
 	private IpInfoDetailsService ipInfoDetailsService;
-	
+
 	@GetMapping("/list")
-	public String listInstallations(Model theModel,HttpServletRequest httpServletRequest) {
+	public String listInstallations(Model theModel, HttpServletRequest httpServletRequest) {
 
 		LoginForm loginForm = (LoginForm) httpServletRequest.getSession().getAttribute("LOGGEDIN_USER");
 
 		// get installations from the service
 		List<IpInfoDetails> ipInfoDetailsList = ipInfoDetailsService.getIpInfoDetails();
+		HashMap<String, String> portsUsedInEachIP = ipInfoDetailsService.getPortsUsedInEachIP();
+		// theModel.addAttribute("portsUsedInEachIP", portsUsedInEachIP);
+
+		HashMap<String, PortsInUseAndAvailable> hashMapInUseAndAvailablePortsPerIP = new HashMap<>();
+		for (IpInfoDetails ipInfoDetails : ipInfoDetailsList) {
+			StringBuffer bufferPortsInUse = new StringBuffer("");
+			StringBuffer bufferPortsAvailableForUse = new StringBuffer("");
+
+			String portsUsed = portsUsedInEachIP.get(ipInfoDetails.getIp());
+			if (portsUsed != null && !portsUsed.isEmpty()) {
+				String openPortsAvailableForEachIP = ipInfoDetails.getPublicPorts();
+				StringTokenizer stringTokenizer = new StringTokenizer(openPortsAvailableForEachIP, ",");
+				while (stringTokenizer.hasMoreTokens()) {
+					String openPort = stringTokenizer.nextToken();
+					if (portsUsed.contains(openPort))
+						bufferPortsInUse.append(openPort).append(",");
+					else
+						bufferPortsAvailableForUse.append(openPort).append(",");
+				}
+			}
+
+			String portsInUse="";
+			String portsAvailableForUse="";
+			if (bufferPortsInUse.length() != 0 && bufferPortsInUse.charAt(bufferPortsInUse.length() - 1) == ',') {
+				portsInUse= bufferPortsInUse.substring(0, bufferPortsInUse.length() - 1);
+			}
+
+			if (bufferPortsAvailableForUse.length() != 0
+					&& bufferPortsAvailableForUse.charAt(bufferPortsAvailableForUse.length() - 1) == ',') {
+				portsAvailableForUse=bufferPortsAvailableForUse.substring(0, bufferPortsAvailableForUse.length() - 1);
+			}
+			
+			if(portsInUse.isEmpty())
+			{
+				portsAvailableForUse=ipInfoDetails.getPublicPorts();
+			}
+
+			hashMapInUseAndAvailablePortsPerIP.put(ipInfoDetails.getIp(),
+					new PortsInUseAndAvailable(portsInUse, portsAvailableForUse));
+
+		}
+
+		theModel.addAttribute("hashMapInUseAndAvailablePortsPerIP", hashMapInUseAndAvailablePortsPerIP);
+
 		// add the installations to the model
 		theModel.addAttribute("ipInfoDetailsList", ipInfoDetailsList);
 
 		return "list-ipinfodetails";
 	}
-	
+
 	@GetMapping("/showFormForAdd")
 	public String showFormForAdd(Model theModel) {
 		// create model attribute to bind form data
@@ -53,22 +100,20 @@ public class IpDetailsController {
 
 	@PostMapping("/saveIpInfoDetails")
 	public String saveIpInfoDetails(@ModelAttribute("ipInfoDetails") @Valid IpInfoDetails ipInfoDetails,
-			BindingResult bindingResult, Model theModel,HttpServletRequest httpServletRequest) {
-		
+			BindingResult bindingResult, Model theModel, HttpServletRequest httpServletRequest) {
+
 		LoginForm loginform = (LoginForm) httpServletRequest.getSession().getAttribute("LOGGEDIN_USER");
-		if(bindingResult.hasErrors())
-		{
+		if (bindingResult.hasErrors()) {
 			theModel.addAttribute("ipInfoDetails", ipInfoDetails);
 			theModel.addAttribute("ipList", InstallationUtility.getIPs());
 			return "ipinfodetails-form";
 		}
-		
+
 		// save the installation using our service
 		if (ipInfoDetails.getId() == 0) {
 			ipInfoDetails.setCreatedBy(loginform.getUsername());
 			ipInfoDetailsService.saveIpInfoDetails(ipInfoDetails);
-		} 
-		else {
+		} else {
 			IpInfoDetails ipInfoDetailsExisting = ipInfoDetailsService.getIpInfoDetails(ipInfoDetails.getId());
 			ipInfoDetails.setCreatedDate(ipInfoDetailsExisting.getCreatedDate());
 			ipInfoDetails.setCreatedBy(ipInfoDetailsExisting.getCreatedBy());
@@ -77,7 +122,7 @@ public class IpDetailsController {
 		}
 		return "redirect:/ip/list";
 	}
-	
+
 	@GetMapping("/showFormForUpdate")
 	public String showFormForUpdate(@RequestParam("id") int theId, Model theModel) {
 
@@ -93,15 +138,15 @@ public class IpDetailsController {
 
 	@GetMapping("/delete")
 	public String deleteInstallation(@RequestParam("id") int theId, HttpServletRequest httpServletRequest) {
-		
+
 		// get the installation from our service
 		LoginForm loginform = (LoginForm) httpServletRequest.getSession().getAttribute("LOGGEDIN_USER");
 		// delete the installation
-		//ipInfoDetailsService.deleteIpInfoDetails(theId);		
+		// ipInfoDetailsService.deleteIpInfoDetails(theId);
 		IpInfoDetails ipInfoDetailsExisting = ipInfoDetailsService.getIpInfoDetails(theId);
 		ipInfoDetailsExisting.setDeleted(1);
 		ipInfoDetailsExisting.setCreatedDate(ipInfoDetailsExisting.getCreatedDate());
-		ipInfoDetailsExisting.setUpdatedBy(loginform.getUsername());		
+		ipInfoDetailsExisting.setUpdatedBy(loginform.getUsername());
 		ipInfoDetailsService.updateIpInfoDetails(ipInfoDetailsExisting);
 		return "redirect:/ip/list";
 	}

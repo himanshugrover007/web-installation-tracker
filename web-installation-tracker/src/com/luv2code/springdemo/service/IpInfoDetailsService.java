@@ -1,5 +1,6 @@
 package com.luv2code.springdemo.service;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.luv2code.springdemo.entity.IpInfoDetails;
@@ -15,5 +16,7 @@ public interface IpInfoDetailsService {
 	public IpInfoDetails getIpInfoDetails(int theId);
 
 	public void deleteIpInfoDetails(int theId);
+	
+	public HashMap<String, String> getPortsUsedInEachIP();
 	
 }

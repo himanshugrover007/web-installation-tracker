@@ -142,11 +142,11 @@ td, th {
 						</c:if>						
 					</td>					
 					<td>${tempInstallation.middlewareLocation}<br>
-						Status - <c:if test="${tempInstallation.status == 'A'}">
-							ACTIVE
+						<b>Status -</b>  <c:if test="${tempInstallation.status == 'A'}">
+							<font color="white" style="background-color: green;">ACTIVE</font>
 						</c:if>
 						<c:if test="${tempInstallation.status == 'I'}">
-							INACTIVE
+							<font color="white" style="background-color: red;">INACTIVE</font>
 						</c:if><br>
 						Version - ${tempInstallation.version}<br>
 						Bits - ${tempInstallation.bitsLocation}
