@@ -13,7 +13,14 @@
 <body id="login-bg">
 
 	<!-- Start: login-holder -->
-	<div id="login-holder" align="center">
+	<div id="login-holder" style="center; position: absolute;
+    left: 50%;
+    top: 60%;
+    text-align: center;
+    width:546px;
+    height:265px;
+    margin-left: -273px; /*half width*/
+    margin-top: -132px;">
 
 		<!-- start logo -->
 		<!-- 	<div id="logo-login">
@@ -24,7 +31,7 @@
 		<div class="clear"></div>
 
 		<!--  start loginbox ................................................................................. -->
-		<div id="loginbox" align="center">
+		<div id="loginbox" align="center;">
 
 			<!--  start login-inner -->
 			<div id="login-inner" align="center">

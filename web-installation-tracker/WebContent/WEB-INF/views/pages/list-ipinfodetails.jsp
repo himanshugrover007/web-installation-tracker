@@ -35,7 +35,7 @@ tr:nth-of-type(odd) {
 }
 
 th {
-	background: #585858;
+	background: #00688B;
 	color: white;
 	font-weight: bold;
 }

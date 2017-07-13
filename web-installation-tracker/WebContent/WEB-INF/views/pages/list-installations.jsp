@@ -40,7 +40,7 @@ tr:nth-of-type(odd) {
 }
 
 th {
-	background: #585858;
+	background: #00688B;
 	color: white;
 	font-weight: bold;
 }
@@ -139,12 +139,6 @@ td, th {
 					    <c:if test="${fn:containsIgnoreCase(valueString, username)}">
 					       <a href="${markForReleaseFlag}">Release</a>
 					    </c:if>
-					    <c:if test="${tempInstallation.demoMachine=='0'}">
-					    	 <br><a href="${blockUnblockDemo}">Block For Demo</a>
-					    </c:if>
-					     <c:if test="${tempInstallation.demoMachine=='1'}">
-					    	 <br><a href="${blockUnblockDemo}">Demo Complete</a>
-					    </c:if>
 				    </c:if>
 					</td>
 					<td>${tempInstallation.environmentType}</td>
@@ -197,7 +191,13 @@ td, th {
 			        </c:forTokens></td>					
 					<td>
 						<!-- display the update link -->
-						<c:if test="${deleted=='0'}"> 
+						<c:if test="${deleted=='0'}">
+						 <c:if test="${tempInstallation.demoMachine=='0'}">
+						    	 <a href="${blockUnblockDemo}">Block For Demo</a><br>
+						    </c:if>
+						     <c:if test="${tempInstallation.demoMachine=='1'}">
+						    	 <a href="${blockUnblockDemo}">Demo Complete</a><br>
+						    </c:if>
 							<a href="${updateLink}">Update</a><br>
 							<a href="${deleteLink}"
 						onclick="if (!(confirm('Are you sure you want to MARK this Installation for deletion?'))) return false">Delete</a>

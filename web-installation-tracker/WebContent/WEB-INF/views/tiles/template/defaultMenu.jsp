@@ -4,7 +4,7 @@ h1 {
   font-weight: 100;
 }
 body {
-  color:#333;
+  color:#022852;
   text-align:center;
   font-family: arial;
 }
@@ -22,7 +22,7 @@ body {
 }
 
 .nav li a {
-	background: #333;
+	background: #022852;
 	color: #fff;
 	display: block;
 	padding: 7px 8px;

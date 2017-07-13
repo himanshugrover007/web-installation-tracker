@@ -22,29 +22,9 @@ a.bg-primary:hover, a.bg-primary:focus {
 .tagline {
 	margin-bottom: 100px;
 }
-
-#coolMenu {
-    font-family: Arial;
-    font-size: 12px;
-    background: #2f8be8;
-}
-#coolMenu > li > a {
-    color: #fff;
-    font-weight: bold;
-}
-#coolMenu > li:hover > a {
-    background: #f09d28;
-    color: #000;
-}
-
-#coolMenu ul {
-    background: #f09d28;
-}
-#coolMenu ul li a {
-    color: #000;
-}
-#coolMenu ul li:hover a {
-    background: #ffc97c;
+a {
+  font: bold italic 100%/1.4 Georgia, serif;
+  color: #00688B;
 }
 </style>
 </head>
@@ -59,7 +39,7 @@ a.bg-primary:hover, a.bg-primary:focus {
             </td>
         </tr>
         <tr>
-            <td bgcolor="#333">
+            <td bgcolor="#022852">
                  <tiles:insertAttribute name="menu" />
              </td>
         </tr>
