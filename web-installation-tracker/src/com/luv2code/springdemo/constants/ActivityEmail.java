@@ -5,8 +5,11 @@ public enum ActivityEmail {
 	CREATE("C"),
     UPDATE("U"),
     DELETE("D"),
+    PERMANENTDELETE("P"),
     INUSE("I"),
-    RELEASE("R");
+    RELEASE("R"),
+    DEMOBLOCK("DB"),
+	DEMORELEASE("DR");
 	
 	private String activityFlag;	
 	

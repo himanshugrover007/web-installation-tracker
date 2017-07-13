@@ -6,7 +6,12 @@
 <html>
 
 <head>
-<title>List Installations</title>
+<c:if test="${deleted=='0'}">
+	<title>INSTALLATION LIST</title>
+</c:if>
+<c:if test="${deleted=='1'}">
+	<title>INSTALLATION MARKED FOR DELETION</title>
+</c:if>
 <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js">
  </script>
 <script>
@@ -90,6 +95,10 @@ td, th {
 				<c:url var="markForReleaseFlag" value="/installation/releaseInstallation">
 					<c:param name="installationId" value="${tempInstallation.id}" />
 				</c:url>
+				
+				<c:url var="blockUnblockDemo" value="/installation/blockUnblockForDemo">
+					<c:param name="installationId" value="${tempInstallation.id}" />
+				</c:url>
 
 				<c:url var="console"
 					value="http://${tempInstallation.ip}:${tempInstallation.adminServerHTTPPort}/console" />
@@ -115,13 +124,27 @@ td, th {
 					         </c:otherwise>
 					      </c:choose>
 				</c:set>
-				<tr>
+				
+					<c:if test="${tempInstallation.demoMachine=='0'}">
+					   	 <tr>
+					</c:if>
+				  	<c:if test="${tempInstallation.demoMachine=='1'}">
+					    	<tr style="background-color: #FF0000; color:white;">
+					</c:if>
 					<td>${tempInstallation.ip}<br>
-					<c:if test="${not fn:containsIgnoreCase(valueString, username)}">
-				        <a href="${markForUseFlag}">Use</a>
-				    </c:if>
-				    <c:if test="${fn:containsIgnoreCase(valueString, username)}">
-				       <a href="${markForReleaseFlag}">Release</a>
+					<c:if test="${deleted=='0'}">
+						<c:if test="${not fn:containsIgnoreCase(valueString, username)}">
+					        <a href="${markForUseFlag}">Use</a>
+					    </c:if>
+					    <c:if test="${fn:containsIgnoreCase(valueString, username)}">
+					       <a href="${markForReleaseFlag}">Release</a>
+					    </c:if>
+					    <c:if test="${tempInstallation.demoMachine=='0'}">
+					    	 <br><a href="${blockUnblockDemo}">Block For Demo</a>
+					    </c:if>
+					     <c:if test="${tempInstallation.demoMachine=='1'}">
+					    	 <br><a href="${blockUnblockDemo}">Demo Complete</a>
+					    </c:if>
 				    </c:if>
 					</td>
 					<td>${tempInstallation.environmentType}</td>
@@ -163,16 +186,26 @@ td, th {
 							</c:if>
 						</c:if>
 					</td>
-					<td><b>Installed By: ${fn:substringBefore(tempInstallation.installedBy, ".")}</b><br><br>
+					<td> <c:if test="${tempInstallation.demoMachine=='1'}">
+					    	 <b>Blocked for Demo By: ${fn:substringBefore(tempInstallation.demoUser, ".")}</b><br>
+					    </c:if>
+					<b>Installed By: ${fn:substringBefore(tempInstallation.installedBy, ".")}</b><br><br>
 					<b>Members Using:</b><br>
 					<c:forTokens var="token" items="${valueString}"
 			                     delims=",">
 			            <c:out value="${token}"/><br>
 			        </c:forTokens></td>					
 					<td>
-						<!-- display the update link --> <a href="${updateLink}">Update</a><br>
+						<!-- display the update link -->
+						<c:if test="${deleted=='0'}"> 
+							<a href="${updateLink}">Update</a><br>
+							<a href="${deleteLink}"
+						onclick="if (!(confirm('Are you sure you want to MARK this Installation for deletion?'))) return false">Delete</a>
+						</c:if>
+						<c:if test="${deleted=='1'}">
 						<a href="${deleteLink}"
-						onclick="if (!(confirm('Are you sure you want to delete this Installation?'))) return false">Delete</a>
+						onclick="if (!(confirm('Are you sure you want to PERMANENTLY delete this Installation?'))) return false">Delete</a>
+						</c:if>
 					</td>
 				</tr>
 			</c:forEach>

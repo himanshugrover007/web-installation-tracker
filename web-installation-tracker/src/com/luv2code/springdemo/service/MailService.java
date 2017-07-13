@@ -123,15 +123,27 @@ public class MailService {
 			break;
 		
 		case DELETE:
-			subject.append(installation.getEnvironmentType()+" - http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort() + " [Deleted] by "+loginForm.getUsername());
+			subject.append(installation.getEnvironmentType()+" - http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort() + " [Marked for Deletion] by "+loginForm.getUsername());
+			break;
+			
+		case PERMANENTDELETE:
+			subject.append(installation.getEnvironmentType()+" - http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort() + " [Permanently Deleted] by "+loginForm.getUsername());
 			break;
 		
 		case INUSE:
-			subject.append(installation.getEnvironmentType()+" - http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort() + " is being used by "+ loginForm.getUsername());
+			subject.append(installation.getEnvironmentType()+" - http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort() + " is being [Used] by "+ loginForm.getUsername());
 			break;
 			
 		case RELEASE:
-			subject.append(installation.getEnvironmentType()+" - http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort() + " has been released by "+ loginForm.getUsername());
+			subject.append(installation.getEnvironmentType()+" - http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort() + " has been [Released] by "+ loginForm.getUsername());
+			break;
+			
+		case DEMOBLOCK:
+			subject.append(installation.getEnvironmentType()+" - http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort() + " has been BLOCKED FOR DEMO by "+ loginForm.getUsername());
+			break;
+			
+		case DEMORELEASE:
+			subject.append(installation.getEnvironmentType()+" - http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort() + " used for DEMO has been RELEASED by "+ loginForm.getUsername());
 			break;
 		}		
 	return subject.toString();
@@ -149,7 +161,7 @@ public class MailService {
 
 		case UPDATE:
 			messageBody.append("The following environment has been updated by "+loginForm.getUsername()+"<br><br>");
-			messageBody.append("Environment is being used by following members :<br>");
+			messageBody.append("Environment is used by following members :<br>");
 			users=hashMapUserDetailsForEachInstallation.get(String.valueOf(installation.getId()));
 			if(users==null)
 			{
@@ -160,7 +172,19 @@ public class MailService {
 			break;
 			
 		case DELETE:
-			messageBody.append("The following environment has been deleted by "+loginForm.getUsername()+"<br><br>");
+			messageBody.append("The following environment has been marked for deletion by "+loginForm.getUsername()+"<br><br>");
+			messageBody.append("Environment was being used by following members :<br>");
+			users=hashMapUserDetailsForEachInstallation.get(String.valueOf(installation.getId()));
+			if(users==null)
+			{
+				users="NONE";
+			}
+			messageBody.append(users);	
+			messageBody.append("<br><br>");	
+			break;
+			
+		case PERMANENTDELETE:
+			messageBody.append("The following environment has been permanently deleted by "+loginForm.getUsername()+"<br><br>");
 			messageBody.append("Environment was being used by following members :<br>");
 			users=hashMapUserDetailsForEachInstallation.get(String.valueOf(installation.getId()));
 			if(users==null)
@@ -172,7 +196,7 @@ public class MailService {
 			break;
 
 		case INUSE:
-			messageBody.append(installation.getEnvironmentType()+" - http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort() + " is also being used by "+ loginForm.getUsername()+"<br><br>");
+			messageBody.append(installation.getEnvironmentType()+" - http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort() + " is being used by "+ loginForm.getUsername()+"<br><br>");
 			messageBody.append("Environment is now being used by following members :<br>");
 			users=hashMapUserDetailsForEachInstallation.get(String.valueOf(installation.getId()));
 			if(users!=null)
@@ -217,6 +241,30 @@ public class MailService {
 				users="NONE";
 			}
 			messageBody.append(users);	
+			messageBody.append("<br><br>");	
+			break;
+			
+		case DEMOBLOCK:
+			messageBody.append("The following environment has been blocked for demo by "+loginForm.getUsername()+"<br><br>");
+			messageBody.append("Environment is used by following members :<br>");
+			users=hashMapUserDetailsForEachInstallation.get(String.valueOf(installation.getId()));
+			if(users==null)
+			{
+				users="NONE";
+			}
+			messageBody.append(users);
+			messageBody.append("<br><br>");	
+			break;
+			
+		case DEMORELEASE:
+			messageBody.append("Demo is complete and environment has been released by "+loginForm.getUsername()+"<br><br>");
+			messageBody.append("Environment is used by following members :<br>");
+			users=hashMapUserDetailsForEachInstallation.get(String.valueOf(installation.getId()));
+			if(users==null)
+			{
+				users="NONE";
+			}
+			messageBody.append(users);
 			messageBody.append("<br><br>");	
 			break;
 		}				
@@ -486,7 +534,7 @@ public class MailService {
 		}
 		else if(installation.getEnvironmentType().equalsIgnoreCase("ICS EC"))
 		{
-			data.put("icsconsolelink","http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort()+"/ic/integration/home/faces/icslogin.jspx");
+			data.put("icsconsolelink","http://"+ installation.getIp()+":"+installation.getManagedServerHTTPPort()+"/ic/integration/home/faces/icslogin.jspx");
 		}
 		
 		data.put("adminconsolelink","http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort()+"/console");

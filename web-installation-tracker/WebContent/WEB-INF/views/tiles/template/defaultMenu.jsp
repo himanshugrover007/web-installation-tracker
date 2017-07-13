@@ -85,7 +85,9 @@ $(document).ready(
 			<li><a href="#">Installation</a>
 				<ul>
 					<li><a
-						href="${pageContext.request.contextPath}/installation/list">View Installations</a></li>
+						href="${pageContext.request.contextPath}/installation/list?deleted=0">Available For Use</a></li>
+					<li><a
+						href="${pageContext.request.contextPath}/installation/list?deleted=1">Marked For Deletion</a></li>
 					<li><a
 						href="${pageContext.request.contextPath}/installation/showFormForAdd">Add
 							Detail</a></li>

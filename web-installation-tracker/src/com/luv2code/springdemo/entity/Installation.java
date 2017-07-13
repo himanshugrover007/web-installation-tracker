@@ -93,6 +93,12 @@ public class Installation implements TimeStamped{
 	@Column(name = "deleted")
 	private int deleted;
 	
+	@Column(name = "demomachine")
+	private int demoMachine;
+	
+	@Column(name = "demouser")
+	private String demoUser;	
+	
 	@Column(name = "updated_by")
 	private String updatedBy;
 	
@@ -234,6 +240,22 @@ public class Installation implements TimeStamped{
 
 	public void setDeleted(int deleted) {
 		this.deleted = deleted;
+	}
+
+	public int getDemoMachine() {
+		return demoMachine;
+	}
+
+	public void setDemoMachine(int demoMachine) {
+		this.demoMachine = demoMachine;
+	}
+
+	public String getDemoUser() {
+		return demoUser;
+	}
+
+	public void setDemoUser(String demoUser) {
+		this.demoUser = demoUser;
 	}
 
 	public String getUpdatedBy() {

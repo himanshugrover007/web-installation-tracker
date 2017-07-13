@@ -18,8 +18,8 @@ public class InstallationServiceImpl implements InstallationService {
 	
 	@Override
 	@Transactional
-	public List<Installation> getInstallations() {
-		return installationDAO.findAll();
+	public List<Installation> getInstallations(int deleted) {
+		return installationDAO.findAll(deleted);
 	}
 
 	@Override

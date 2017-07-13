@@ -14,4 +14,5 @@ public interface InstallationDAO extends GenericDaoInterface<Installation>{
 //
 //	public void deleteInstallation(int theId);
 	
+	public List<Installation> findAll(int deleted);	
 }

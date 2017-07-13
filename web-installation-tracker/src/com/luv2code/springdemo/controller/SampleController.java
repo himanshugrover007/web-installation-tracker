@@ -91,7 +91,7 @@ public class SampleController {
 				// to the welcome uri;
 				loginform.setUsername(username);
 				request.getSession().setAttribute("LOGGEDIN_USER", loginform);
-				return "redirect:/installation/list";
+				return "redirect:/installation/list?deleted=0";
 			} else {
 				return "redirect:/login.failed";
 			}

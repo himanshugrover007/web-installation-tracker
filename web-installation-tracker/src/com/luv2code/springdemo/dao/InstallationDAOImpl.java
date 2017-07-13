@@ -81,14 +81,14 @@ public class InstallationDAOImpl extends Dao<Installation> implements Installati
 */
 	
 	@Override
-	public List<Installation> findAll() {
+	public List<Installation> findAll(int deleted) {
 		// TODO Auto-generated method stub
 		
 		Session session = sessionFactory.getCurrentSession();
 		
 		Criteria cr = session.createCriteria(Installation.class);
 		// To sort records in ascending order
-		cr.add(Restrictions.eq("deleted", 0));
+		cr.add(Restrictions.eq("deleted", deleted));
 		cr.addOrder(Order.desc("lastUpdatedDate"));
 
 		return super.findAll(cr);

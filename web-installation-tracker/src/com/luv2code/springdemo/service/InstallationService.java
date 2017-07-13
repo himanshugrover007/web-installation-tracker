@@ -6,7 +6,7 @@ import com.luv2code.springdemo.entity.Installation;
 
 public interface InstallationService {
 
-	public List<Installation> getInstallations();
+	public List<Installation> getInstallations(int deleted);
 
 	public void saveInstallation(Installation theInstallation);
 	

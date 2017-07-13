@@ -48,17 +48,18 @@ public class InstallationController {
 	private InstallationValidator installationValidator;
 
 	@GetMapping("/list")
-	public String listInstallations(Model theModel,HttpServletRequest httpServletRequest) {
+	public String listInstallations(@RequestParam("deleted") int deleted,Model theModel,HttpServletRequest httpServletRequest) {
 
 		LoginForm loginForm = (LoginForm) httpServletRequest.getSession().getAttribute("LOGGEDIN_USER");
 
 		// get installations from the service
-		List<Installation> theInstallations = installationService.getInstallations();
+		List<Installation> theInstallations = installationService.getInstallations(deleted);
 		HashMap<String, String> hashMapUserDetailsForEachInstallation= installationUserService.getUserDetailsForEachInstallation();
 		// add the installations to the model
 		theModel.addAttribute("hashMapUserDetailsForEachInstallation", hashMapUserDetailsForEachInstallation);
 		theModel.addAttribute("loginForm", loginForm);
 		theModel.addAttribute("installations", theInstallations);
+		theModel.addAttribute("deleted", deleted);		
 
 		return "list-installations";
 	}
@@ -89,13 +90,13 @@ public class InstallationController {
 			return "installation-form";
 		}
 
-		LoginForm loginform = (LoginForm) httpServletRequest.getSession().getAttribute("LOGGEDIN_USER");
-		theInstallation.setInstalledBy(loginform.getUsername());
+		LoginForm loginform = (LoginForm) httpServletRequest.getSession().getAttribute("LOGGEDIN_USER");		
 		
 		HashMap<String, String> hashMapUserDetailsForEachInstallation= installationUserService.getUserDetailsForEachInstallation();
 		
 		// save the installation using our service
 		if (theInstallation.getId() == 0) {
+			theInstallation.setInstalledBy(loginform.getUsername());
 			installationService.saveInstallation(theInstallation);			
 			mailService.sendMail(loginform,mailService.getMessage(loginform, theInstallation, hashMapUserDetailsForEachInstallation, ActivityEmail.CREATE));
 			
@@ -108,7 +109,7 @@ public class InstallationController {
 			mailService.sendMail(loginform,mailService.getMessage(loginform, theInstallation, hashMapUserDetailsForEachInstallation, ActivityEmail.UPDATE));
 			
 		}
-		return "redirect:/installation/list";
+		return "redirect:/installation/list?deleted=0";
 	}
 
 	@GetMapping("/showFormForUpdate")
@@ -135,15 +136,60 @@ public class InstallationController {
 		// delete the installation
 		
 		Installation theInstallation = installationService.getInstallation(theInstallationId);
+		int deleted=theInstallation.getDeleted();
 		HashMap<String, String> hashMapUserDetailsForEachInstallation= installationUserService.getUserDetailsForEachInstallation();
 		//installationService.deleteInstallation(theInstallationId);
 		theInstallation.setCreatedDate(theInstallation.getCreatedDate());
 		theInstallation.setUpdatedBy(loginform.getUsername());
-		theInstallation.setDeleted(1);
+		ActivityEmail activityEmail;
+		if(deleted==0)
+		{
+			theInstallation.setDeleted(1);
+			activityEmail=ActivityEmail.DELETE;
+		}
+		else
+		{
+			activityEmail=ActivityEmail.PERMANENTDELETE;
+			theInstallation.setDeleted(2);
+		}
+			
+		
 		installationService.updateInstallation(theInstallation);
 		installationUserService.deleteUserFromInstallationUserTable(theInstallationId);
-		mailService.sendMail(loginform,mailService.getMessage(loginform, theInstallation, hashMapUserDetailsForEachInstallation,  ActivityEmail.DELETE));
-		return "redirect:/installation/list";
+		
+		mailService.sendMail(loginform,mailService.getMessage(loginform, theInstallation, hashMapUserDetailsForEachInstallation,  activityEmail));
+		
+		return "redirect:/installation/list?deleted="+deleted;
+	}
+	
+	@GetMapping("/blockUnblockForDemo")
+	public String blockUnblockForDemo(@RequestParam("installationId") int theInstallationId, HttpServletRequest httpServletRequest) {
+		
+		// get the installation from our service
+		LoginForm loginform = (LoginForm) httpServletRequest.getSession().getAttribute("LOGGEDIN_USER");
+
+		// delete the installation
+		
+		Installation theExistingInstallation = installationService.getInstallation(theInstallationId);
+		int demoMachine=theExistingInstallation.getDemoMachine();
+		HashMap<String, String> hashMapUserDetailsForEachInstallation= installationUserService.getUserDetailsForEachInstallation();
+		theExistingInstallation.setUpdatedBy(loginform.getUsername());
+		ActivityEmail activityEmail;
+		if(demoMachine==0)
+		{
+			theExistingInstallation.setDemoMachine(1);
+			activityEmail=ActivityEmail.DEMOBLOCK;
+			theExistingInstallation.setDemoUser(loginform.getUsername());			
+		}			
+		else
+		{
+			theExistingInstallation.setDemoMachine(0);
+			activityEmail=ActivityEmail.DEMORELEASE;
+			theExistingInstallation.setDemoUser(null);
+		}
+		installationService.updateInstallation(theExistingInstallation);
+		mailService.sendMail(loginform,mailService.getMessage(loginform, theExistingInstallation, hashMapUserDetailsForEachInstallation, activityEmail));			
+		return "redirect:/installation/list?deleted=0";
 	}
 	
 	@GetMapping("/useInstallation")
@@ -159,7 +205,7 @@ public class InstallationController {
 		installationUserService.saveInstallationUser(theInstallationUser);
 		mailService.sendMail(loginform,mailService.getMessage(loginform, theInstallation, hashMapUserDetailsForEachInstallation,  ActivityEmail.INUSE));
 		// send over to our form
-		return "redirect:/installation/list";
+		return "redirect:/installation/list?deleted=0";
 	}
 	
 	@GetMapping("/releaseInstallation")
@@ -175,7 +221,7 @@ public class InstallationController {
 		installationUserService.deleteDetailsFromInstallationUser(theInstallationUser);
 		mailService.sendMail(loginform,mailService.getMessage(loginform, theInstallation, hashMapUserDetailsForEachInstallation,  ActivityEmail.RELEASE));
 		// send over to our form
-		return "redirect:/installation/list";
+		return "redirect:/installation/list?deleted=0";
 	}
 
 }
