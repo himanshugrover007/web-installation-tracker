@@ -152,7 +152,7 @@
 	</form:form>
 
 	<p>
-		<a href="${pageContext.request.contextPath}/installation/list">Back
+		<a href="${pageContext.request.contextPath}/installation/list?deleted=0">Back
 			to List</a>
 	</p>
 
