@@ -137,7 +137,7 @@ td, th {
 					        <a href="${markForUseFlag}">Use</a>
 					    </c:if>
 					    <c:if test="${fn:containsIgnoreCase(valueString, username)}">
-					       <a href="${markForReleaseFlag}">Release</a>
+					       <a style="color:white;background-color:#1A77FF" href="${markForReleaseFlag}">Release</a>
 					    </c:if>
 				    </c:if>
 					</td>

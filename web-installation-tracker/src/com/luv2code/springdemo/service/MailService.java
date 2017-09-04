@@ -89,7 +89,7 @@ public class MailService {
 		try {
 			MimeMessageHelper helper = new MimeMessageHelper(message, true);
 			helper.setFrom(emailMessage.getFrom());
-			helper.setTo(emailMessage.getTo());
+			helper.setTo(new String[]{emailMessage.getTo(),"sadanandam.v@bcone.com", "srinidhi.k@bcone.com"});
 			helper.setSubject(emailMessage.getSubject());
 			helper.setText(emailMessage.getBody(),true);
 		} catch (MessagingException e) {
@@ -103,7 +103,7 @@ public class MailService {
 	{
 		EmailMessage emailMessage = new EmailMessage();
 		emailMessage.setFrom(loginForm.getUsername());
-		emailMessage.setTo(loginForm.getUsername());
+		emailMessage.setTo("osf_team_noida@bcone.com");
 		emailMessage.setSubject(getSubject(loginForm,installation,hashMapUserDetailsForEachInstallation, activityEmail));
 		emailMessage.setBody(getMessageBodyForMail(loginForm,installation, hashMapUserDetailsForEachInstallation, activityEmail));
 		return emailMessage;
@@ -112,7 +112,7 @@ public class MailService {
 
 	private String getSubject(LoginForm loginForm, Installation installation, HashMap<String, String> hashMapUserDetailsForEachInstallation, ActivityEmail activityEmail) {
 
-		StringBuffer subject = new StringBuffer();
+		StringBuffer subject = new StringBuffer("[WIT] ");
 		switch (activityEmail) {
 		case CREATE:
 			subject.append(installation.getEnvironmentType()+" - http://"+ installation.getIp()+":"+installation.getAdminServerHTTPPort() + " [Created] by "+loginForm.getUsername());

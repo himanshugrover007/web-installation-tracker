@@ -104,6 +104,7 @@ public class InstallationController {
 			// get the installation from our service
 			Installation theInstallationExisting = installationService.getInstallation(theInstallation.getId());
 			theInstallation.setCreatedDate(theInstallationExisting.getCreatedDate());
+			theInstallation.setInstalledBy(theInstallationExisting.getInstalledBy());
 			theInstallation.setUpdatedBy(loginform.getUsername());
 			installationService.updateInstallation(theInstallation);
 			mailService.sendMail(loginform,mailService.getMessage(loginform, theInstallation, hashMapUserDetailsForEachInstallation, ActivityEmail.UPDATE));
